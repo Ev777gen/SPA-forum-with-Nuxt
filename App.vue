@@ -12,7 +12,7 @@
       </aside>
       <main class="app__content">
         <!-- <TheBreadcrumbs />-->
-        <slot />
+        <NuxtPage />
         <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
         <!--<AppSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />-->
       </main>
@@ -21,6 +21,16 @@
 </template>
 
 <script setup lang="ts">
+
+/*const { authId } = useAuth();
+console.log(authId)
+console.log(authId.value)*/
+
+/*onMounted(async () => {
+  const {authId} = useAuth()
+  console.log(authId)
+})*/
+
 /*import TheBreadcrumbs from '@/components/layout/TheBreadcrumbs';
 import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
@@ -51,8 +61,8 @@ async function fetchAsyncData() {
 </script>
 
 <style lang="scss">
-@import '@/assets/reset.css';
-@import '@/assets/global.scss';
+@import '@/assets/scss/reset.scss';
+@import '@/assets/scss/main.scss';
 /*@import "~nprogress/nprogress.css";*/
 
 $container-width: 1100px;

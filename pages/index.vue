@@ -36,12 +36,30 @@
       <!--<button class="btn btn_green" @click.prevent="logInToCheckOutThisSite" :disabled="authUser">
         войти в аккаунт существующего пользователя
       </button>-->
+      <button class="btn btn_green" @click.prevent="logInToCheckOutThisSite" :disabled="authUser">
+        войти в аккаунт существующего пользователя
+      </button>
     </div>
 
   </div>
 </template>
 
 <script setup lang="ts">
+
+const { authUser, signInUserWithEmailAndPassword } = useAuth();
+
+async function logInToCheckOutThisSite() {
+  //try {
+    //startLoadingIndicator();
+    //const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
+    const credentials = await signInUserWithEmailAndPassword({ email: 'email@mail.ru', password: '123456' });
+    console.log('credentials', credentials)
+    //stopLoadingIndicator();
+  //} catch (error) {
+  //  alert(error.message);
+  //}
+}
+
 /*import { storeToRefs } from 'pinia';
 import { useAuthStore } from '@/stores/AuthStore';
 import { useForumStore } from '@/stores/ForumStore';
