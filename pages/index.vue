@@ -33,10 +33,10 @@
         зарегистрироваться
       </router-link>-->
       самостоятельно, используя любую почту и пароль, или 
-      <!--<button class="btn btn_green" @click.prevent="logInToCheckOutThisSite" :disabled="authUser">
+      <!--<button class="btn btn_green" @click.prevent="logInWithDefaultUser" :disabled="authUser">
         войти в аккаунт существующего пользователя
       </button>-->
-      <button class="btn btn_green" @click.prevent="logInToCheckOutThisSite" :disabled="authUser">
+      <button class="btn btn_green" @click.prevent="logInWithDefaultUser" :disabled="authUser">
         войти в аккаунт существующего пользователя
       </button>
     </div>
@@ -44,16 +44,22 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 
-const { authUser, signInUserWithEmailAndPassword } = useAuth();
+const { authId, authUser, signInUserWithEmailAndPassword } = useAuth();
 
-async function logInToCheckOutThisSite() {
+const nuxtApp = useNuxtApp();
+//const auth = nuxtApp.$auth;
+
+async function logInWithDefaultUser() {
   //try {
     //startLoadingIndicator();
     //const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
     const credentials = await signInUserWithEmailAndPassword({ email: 'email@mail.ru', password: '123456' });
     console.log('credentials', credentials)
+    console.log('auth', nuxtApp.$auth)
+    console.log('authUser', authUser.value)
+    console.log('authId', authId.value)
     //stopLoadingIndicator();
   //} catch (error) {
   //  alert(error.message);
@@ -68,7 +74,7 @@ const { authUser } = storeToRefs(useAuthStore());
 const { signInWithEmailAndPassword } = useAuthStore();
 const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
 
-async function logInToCheckOutThisSite() {
+async function logInWithDefaultUser() {
   try {
     startLoadingIndicator();
     const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });

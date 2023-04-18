@@ -11,12 +11,15 @@ export default function() {
 
   const { $auth: auth, $storage: storage } = useNuxtApp();
 
-  let authId = useState("auth", () => null);
-  const authUserUnsubscribe = ref(null);
-  const authObserverUnsubscribe = ref(null);
+  let authId = useState("authId", () => null);
+  const authUserUnsubscribe = ref([]);
+  const authObserverUnsubscribe = ref([]);
+
+  //const authUser = useState("authUser", () => "hello authUser");
 
   const authUser = computed(() => {
     const { user } = useDatabase(); // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    console.log('inside authUser, user(authId.value)', user.value(authId.value))
     return user.value(authId.value);
   });
 
@@ -33,13 +36,22 @@ export default function() {
   async function signOutUser() {
     await auth.signOut();
     authId.value = null;
+    //authUser.value = null; // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    console.log('signOut auth.currentUser', auth.currentUser)
+    console.log('signOut authId', authId.value)
   }
 
   async function fetchAuthUser() {
+    console.log('fetchAuthUser', '1')
     const { fetchItem } = useDatabase();
+    console.log('fetchAuthUser', '2')
+    console.log('auth', auth)
     const userId = auth.currentUser?.uid;
+    console.log('fetchAuthUser', '3')
     if (!userId) return;
-    await fetchItem({
+    console.log('fetchAuthUser', '4')
+    //console.log(useState('users').value)
+    const fetchedAuthUser = await fetchItem({
         resource: 'users',
         id: userId,
         handleUnsubscribe: (unsubscribe) => {
@@ -47,6 +59,13 @@ export default function() {
         }
       });
     authId.value = userId;
+    //authUser.value = fetchedAuthUser; // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    console.log('fetchAuthUser', '5', 'userId', userId)
+    console.log('fetchAuthUser', '6', 'fetchedAuthUser', fetchedAuthUser)
+    console.log('fetchAuthUser', '7', 'authUser.value', authUser.value)
+
+    //console.log('useAuth fetchAuthUser uid', auth.currentUser?.uid)
+    //console.log('useAuth fetchAuthUser authId.value', authId.value)
   }
 
   function initAuthentication() {

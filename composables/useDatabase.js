@@ -40,14 +40,35 @@ import {
 export default function() {
   const { $firestore: db } = useNuxtApp();
 
-  let categories = useState("forum", () => []);
-  let forums = useState("forum", () => []);
-  let threads = useState("forum", () => []);
-  let posts = useState("forum", () => []);
-  let users = useState("forum", () => []);
-  let unsubscribes = useState("forum", () => []);
-  let isAsyncDataLoaded = useState("forum", () => true);
-
+  let categories = useState("categories", () => []);
+  let forums = useState("forums", () => []);
+  let threads = useState("threads", () => []);
+  let posts = useState("posts", () => []);
+  let users = useState("users", () => []);
+  let unsubscribes = useState("unsubscribes", () => []);
+  let isAsyncDataLoaded = useState("isAsyncDataLoaded", () => true);
+/*
+  const user = (id) => {
+    const user = findItemById(users.value, id);
+    //const user = users.value.find(user => user.id === id);
+    if (!user) return null;
+    return {
+      ...user,
+      get posts () {
+        return posts.value.filter(post => post.userId === user.id);
+      },
+      get postsCount () {
+        return user.postsCount || 0;
+      },
+      get threads () {
+        return threads.value.filter(post => post.userId === user.id);
+      },
+      get threadsCount () {
+        return user.threadsStarted?.length || 0;
+      }
+    }
+  }
+  */
   const user = computed(() => {
     return (id) => {
       //const user = findItemById(users.value, id);
@@ -105,9 +126,12 @@ export default function() {
 
         if (doc.exists()) {
           const item = { ...doc.data(), id: doc.id };
-          let previousItem = findItemById(resource.value, id);
+          let previousItem = findItemById(useState(resource).value, id);
           previousItem = previousItem ? { ...previousItem } : null;
-          pushItemToStore(resource.value, item);
+          console.log('fetchItem item', item)
+          console.log('fetchItem resource', resource)
+          console.log('fetchItem resource.value', resource.value)
+          pushItemToStore(useState(resource).value, item);
           if (typeof callBack === 'function') {
             const isLocal = doc.metadata.hasPendingWrites;
             callBack({ item: { ...item }, previousItem, isLocal });
@@ -365,12 +389,15 @@ export default function() {
     }
   }
   function pushItemToStore(resources, item) {
+    console.log('pushItemToStore', '1')
     const index = resources.findIndex(r => r.id === item.id);
+    console.log('pushItemToStore', '2', index)
     if (item.id && index !== -1) {
       resources[index] = item;
     } else {
       resources.push(item);
     }
+    console.log('pushItemToStore', '3', resources)
   }
   function makeResourceFromDoc(doc) {
     if (typeof doc?.data !== 'function') return doc;
@@ -381,6 +408,8 @@ export default function() {
     user,
     thread,
     unsubscribeAllSnapshots, // ???
+    fetchItem,
+    fetchItems,
     fetchCategory,
     fetchForum,
     fetchThread,

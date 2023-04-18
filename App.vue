@@ -11,6 +11,9 @@
         <TheSidebar />
       </aside>
       <main class="app__content">
+        <button @click="fetchAuthUser" class="btn btn_red">Fetch auth user</button><span>_</span>
+        <button @click="printAuthUser" class="btn btn_red">Print auth user</button><span>_</span>
+        <button @click="printAuthId" class="btn btn_red">Print auth id</button><span>_</span>
         <!-- <TheBreadcrumbs />-->
         <NuxtPage />
         <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
@@ -21,33 +24,28 @@
 </template>
 
 <script setup lang="ts">
+//import NProgress from 'nprogress';
+//import useDarkMode from '@/composables/useDarkMode';
 
-/*const { authId } = useAuth();
-console.log(authId)
-console.log(authId.value)*/
+//const router = useRouter();
 
-/*onMounted(async () => {
-  const {authId} = useAuth()
-  console.log(authId)
-})*/
+//const { isAsyncDataLoaded } = storeToRefs(useForumStore());
+const { authUser, fetchAuthUser } = useAuth();
+//const { isDarkMode } = useDarkMode();
 
-/*import TheBreadcrumbs from '@/components/layout/TheBreadcrumbs';
-import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useForumStore } from '@/stores/ForumStore';
-import router from "@/router";
-import NProgress from 'nprogress';
-import useDarkMode from '@/composables/useDarkMode';
+function printAuthUser() {
+  console.log(authUser.value);
+}
 
-const { isAsyncDataLoaded } = storeToRefs(useForumStore());
-const { fetchAuthUser } = useAuthStore();
-const { isDarkMode } = useDarkMode();
+function printAuthId() {
+  console.log(useState('authId').value);
+}
 
 fetchAsyncData();
 
 async function fetchAsyncData() {
   await fetchAuthUser();
-  NProgress.configure({
+  /*NProgress.configure({
     speed: 200,
     showSpinner: false
   });
@@ -56,8 +54,8 @@ async function fetchAsyncData() {
   });
   router.afterEach(() => {
     setTimeout(() => NProgress.done(), 500);
-  });
-}*/
+  });*/
+}
 </script>
 
 <style lang="scss">

@@ -2,9 +2,11 @@
   <header class="header">
     <div class="header__body container">
 
-      <!--<nuxt-link :to="{name: 'Home'}" v-if="!isMobile || (authUser && isMobile)" class="header__logo">Logo</nuxt-link>
+      <NuxtLink to="/" v-if="!isMobile || (authUser && isMobile)" class="header__logo">Logo</NuxtLink>
 
-      <div class="header__menu">
+      <a href="#" @click.prevent="onSignOut">Выйти</a>
+
+      <!--<div class="header__menu">
 
         <label class="switch">
           <input type="checkbox" v-model="isDarkMode" @click="toggleDarkMode" />
@@ -58,24 +60,19 @@
 </template>
 
 <script setup>
-/*import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useRouter } from 'vue-router';
-import clickOutside from 'click-outside-vue3';
-import useDarkMode from '@/composables/useDarkMode';
+//import clickOutside from 'click-outside-vue3';
+//import useDarkMode from '@/composables/useDarkMode';
 
-const vClickOutside = clickOutside.directive;
+//const vClickOutside = clickOutside.directive;
 
 const router = useRouter();
 
-const { isDarkMode, toggleDarkMode } = useDarkMode();
+//const { isDarkMode, toggleDarkMode } = useDarkMode();
 
 const isDropdownOpen = ref(false);
 const isMobile = ref(false);
 
-const { authUser } = storeToRefs(useAuthStore());
-const { signOut } = useAuthStore();
+const { authUser, signOutUser } = useAuth();
 
 onCreated();
 
@@ -91,13 +88,13 @@ async function onCreated() {
 }
 
 function onSignOut () {
-  signOut();
+  signOutUser();
   isDropdownOpen.value = false;
 }
 
 function onClickOutside () {
   isDropdownOpen.value = false;
-}*/
+}
 </script>
 
 <style lang="scss" scoped>

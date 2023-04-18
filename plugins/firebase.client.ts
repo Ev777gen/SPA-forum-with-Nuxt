@@ -4,17 +4,15 @@ import { getAuth } from "firebase/auth";
 import { getStorage } from 'firebase/storage';
 
 export default defineNuxtPlugin(nuxtApp => {
-  // Hardcode for now. Later add:
-  // const config = useRuntimeConfig();
-  // ... 
-  // apiKey: config.VUE_APP_FIREBASE_API_KEY,
+  const config = useRuntimeConfig();
+
   const firebaseConfig = {
-    apiKey: "AIzaSyDrneVPNzmr8y5EraatCBjTIM4UIf563xs",
-    authDomain: "spa-blog-c7ad9.firebaseapp.com",
-    projectId: "spa-blog-c7ad9",
-    storageBucket: "spa-blog-c7ad9.appspot.com",
-    messagingSenderId: "965165354166",
-    appId: "1:965165354166:web:8683642d1540a64df6ea17"
+    apiKey: config.VUE_APP_FIREBASE_API_KEY,
+    authDomain: config.VUE_APP_FIREBASE_AUTH_DOMAIN,
+    projectId: config.VUE_APP_FIREBASE_PROJECT_ID,
+    storageBucket: config.VUE_APP_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: config.VUE_APP_FIREBASE_MESSAGING_SENDER_ID,
+    appId: config.VUE_APP_FIREBASE_APP_ID
   }
   
   const firebaseApp = initializeApp(firebaseConfig);
@@ -32,6 +30,3 @@ export default defineNuxtPlugin(nuxtApp => {
   nuxtApp.vueApp.provide('storage', storage);
   nuxtApp.provide('storage', storage);
 });
-
-// https://medium.com/codex/using-firebase-in-nuxt3-the-right-way-bebbb6d8c4dd
-// https://medium.com/@cybercoder.naj/list/nuxt3-tutorial-8af9304349ba 
