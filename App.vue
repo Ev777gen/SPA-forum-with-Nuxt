@@ -1,19 +1,20 @@
 <template>
-  <!--<div class="app" :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : null">-->
-  <div class="app">
+  <div
+    class="app"
+    :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : null"
+  >
     <header class="app__header">
-      <TheNavbar/>
+      <TheNavbar />
     </header>
-    <hr>
+    <hr />
     <div class="app__body container">
-      <!--<aside class="app__sidebar desktop-only" :style="isDarkMode ? { backgroundColor: '#555' } : null">-->
-      <aside class="app__sidebar desktop-only">
+      <aside
+        class="app__sidebar desktop-only"
+        :style="isDarkMode ? { backgroundColor: '#555' } : null"
+      >
         <TheSidebar />
       </aside>
       <main class="app__content">
-        <button @click="fetchAuthUser" class="btn btn_red">Fetch auth user</button><span>_</span>
-        <button @click="printAuthUser" class="btn btn_red">Print auth user</button><span>_</span>
-        <button @click="printAuthId" class="btn btn_red">Print auth id</button><span>_</span>
         <!-- <TheBreadcrumbs />-->
         <NuxtPage />
         <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
@@ -25,21 +26,13 @@
 
 <script setup lang="ts">
 //import NProgress from 'nprogress';
-//import useDarkMode from '@/composables/useDarkMode';
+import useDarkMode from "@/composables/useDarkMode";
 
 //const router = useRouter();
 
 //const { isAsyncDataLoaded } = storeToRefs(useForumStore());
 const { authUser, fetchAuthUser } = useAuth();
-//const { isDarkMode } = useDarkMode();
-
-function printAuthUser() {
-  console.log(authUser.value);
-}
-
-function printAuthId() {
-  console.log(useState('authId').value);
-}
+const { isDarkMode } = useDarkMode();
 
 fetchAsyncData();
 
@@ -59,8 +52,8 @@ async function fetchAsyncData() {
 </script>
 
 <style lang="scss">
-@import '@/assets/scss/reset.scss';
-@import '@/assets/scss/main.scss';
+@import "@/assets/scss/reset.scss";
+@import "@/assets/scss/main.scss";
 /*@import "~nprogress/nprogress.css";*/
 
 $container-width: 1100px;
@@ -78,7 +71,7 @@ $header-height: 75px;
 .app {
   min-height: 100vh;
   background-color: #fff;
-  
+
   &__header {
     position: fixed;
     top: 0;
@@ -87,7 +80,7 @@ $header-height: 75px;
     background-color: #23374d;
     z-index: 999;
   }
-  
+
   &__body {
     margin-top: $header-height;
   }

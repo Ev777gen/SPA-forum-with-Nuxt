@@ -5,8 +5,8 @@
     <div class="homepage__text">
       <p>
         Привет! Это пример реализации SPA в виде
-        <!--<router-link :to="{name: 'ForumMainPage'}" class="homepage__link">форума</router-link>.-->
-        Здесь можно зарегистрироваться, создать новую тему, написать пост,
+        <NuxtLink to="/forum" class="homepage__link">форума</NuxtLink>. Здесь
+        можно зарегистрироваться, создать новую тему, написать пост,
         отредактировать свои данные на странице профиля и поменять e-mail в
         настроках. Функционал и дизайн специально упрощены, чтобы было
         нагляднее.
@@ -44,13 +44,10 @@
     </div>
     <div class="homepage__text">
       Чтобы осмотреться вокруг, можно
-      <!--<router-link :to="{name: 'RegisterForm'}" class="homepage__link">
+      <NuxtLink to="/user/register" class="homepage__link">
         зарегистрироваться
-      </router-link>-->
+      </NuxtLink>
       самостоятельно, используя любую почту и пароль, или
-      <!--<button class="btn btn_green" @click.prevent="logInWithDefaultUser" :disabled="authUser">
-        войти в аккаунт существующего пользователя
-      </button>-->
       <button
         class="btn btn_green"
         @click.prevent="logInWithDefaultUser"

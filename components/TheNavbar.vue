@@ -11,10 +11,10 @@
       <!--<a href="#" @click.prevent="onSignOut">Выйти</a>-->
 
       <div class="header__menu">
-        <!--<label class="switch">
+        <label class="switch">
           <input type="checkbox" v-model="isDarkMode" @click="toggleDarkMode" />
           <span class="slider round"></span>
-        </label>-->
+        </label>
 
         <a
           v-if="authUser && !isMobile"
@@ -46,59 +46,49 @@
         </div>
 
         <div v-else class="header__not-auth-user">
-          <!--<NuxtLink :to="{ name: 'RegisterForm' }" class="header__link"
+          <NuxtLink to="user/register" class="header__link"
             >Зарегистрироваться</NuxtLink
           >
-          <NuxtLink :to="{ name: 'SignIn' }" class="header__link">
+          <NuxtLink to="/user/signin" class="header__link">
             <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
-          </NuxtLink>-->
+          </NuxtLink>
         </div>
 
-        <!--<div
+        <div
           class="dropdown"
           :class="{ dropdown_open: isDropdownOpen }"
           :style="isDarkMode ? { backgroundColor: '#eee' } : null"
         >
           <nav class="dropdown__nav mobile-only">
-            <NuxtLink :to="{ name: 'HomeView' }" class="dropdown__link"
-              >На главную</NuxtLink
-            >
-            <NuxtLink :to="{ name: 'ForumMainPage' }" class="dropdown__link"
-              >Форум</NuxtLink
-            >
-            <NuxtLink :to="{ name: 'AboutMe' }" class="dropdown__link"
-              >Обо мне</NuxtLink
-            >
+            <NuxtLink to="/" class="dropdown__link">На главную</NuxtLink>
+            <NuxtLink to="/forum" class="dropdown__link">Форум</NuxtLink>
+            <NuxtLink to="/aboutme" class="dropdown__link">Обо мне</NuxtLink>
             <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null" />
           </nav>
-          <NuxtLink :to="{ name: 'ProfileView' }" class="dropdown__link"
+          <NuxtLink to="/user/profile" class="dropdown__link"
             >Мой профиль</NuxtLink
           >
-          <NuxtLink :to="{ name: 'SettingsView' }" class="dropdown__link"
+          <NuxtLink to="/user/settings" class="dropdown__link"
             >Настройки</NuxtLink
           >
           <a href="" class="dropdown__link" @click.prevent="onSignOut"
             >Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket"
           /></a>
-        </div>-->
+        </div>
       </div>
     </div>
   </header>
 </template>
 
 <script setup>
-//import clickOutside from 'click-outside-vue3';
-//import useDarkMode from '@/composables/useDarkMode';
+import clickOutside from "click-outside-vue3";
+import useDarkMode from "@/composables/useDarkMode";
 
-//const vClickOutside = clickOutside.directive;
-
+const vClickOutside = clickOutside.directive;
 const router = useRouter();
-
-//const { isDarkMode, toggleDarkMode } = useDarkMode();
-
+const { isDarkMode, toggleDarkMode } = useDarkMode();
 const isDropdownOpen = ref(false);
 const isMobile = ref(false);
-
 const { authUser, signOutUser } = useAuth();
 
 onCreated();
