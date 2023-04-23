@@ -8,14 +8,13 @@
         >Logo</NuxtLink
       >
 
-      <a href="#" @click.prevent="onSignOut">Выйти</a>
+      <!--<a href="#" @click.prevent="onSignOut">Выйти</a>-->
 
-      <!--<div class="header__menu">
-
-        <label class="switch">
+      <div class="header__menu">
+        <!--<label class="switch">
           <input type="checkbox" v-model="isDarkMode" @click="toggleDarkMode" />
           <span class="slider round"></span>
-        </label>
+        </label>-->
 
         <a
           v-if="authUser && !isMobile"
@@ -23,12 +22,20 @@
           v-click-outside="onClickOutside"
           class="header__user-avatar"
         >
-          <AppAvatar class="header__avatar avatar_small" :src="authUser?.avatar" :alt="`${authUser.name} profile image`"/>
-          <font-awesome-icon icon="fa-solid fa-angle-down" class="header__arrow" :class="{'header__arrow_up': isDropdownOpen}" />
+          <AppAvatar
+            class="header__avatar avatar_small"
+            :src="authUser?.avatar"
+            :alt="`${authUser.name} profile image`"
+          />
+          <font-awesome-icon
+            icon="fa-solid fa-angle-down"
+            class="header__arrow"
+            :class="{ header__arrow_up: isDropdownOpen }"
+          />
         </a>
-        
-        <div 
-          v-else-if="authUser && isMobile" 
+
+        <div
+          v-else-if="authUser && isMobile"
           @click="isDropdownOpen = !isDropdownOpen"
           v-click-outside="onClickOutside"
           class="burger"
@@ -39,25 +46,42 @@
         </div>
 
         <div v-else class="header__not-auth-user">
-          <nuxt-link :to="{name: 'RegisterForm'}" class="header__link">Зарегистрироваться</nuxt-link>
-          <nuxt-link :to="{name: 'SignIn'}" class="header__link">
+          <!--<NuxtLink :to="{ name: 'RegisterForm' }" class="header__link"
+            >Зарегистрироваться</NuxtLink
+          >
+          <NuxtLink :to="{ name: 'SignIn' }" class="header__link">
             <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
-          </nuxt-link>
+          </NuxtLink>-->
         </div>
 
-        <div class="dropdown" :class="{'dropdown_open': isDropdownOpen}" :style="isDarkMode ? { backgroundColor: '#eee' } : null">
+        <!--<div
+          class="dropdown"
+          :class="{ dropdown_open: isDropdownOpen }"
+          :style="isDarkMode ? { backgroundColor: '#eee' } : null"
+        >
           <nav class="dropdown__nav mobile-only">
-            <nuxt-link :to="{name: 'HomeView'}" class="dropdown__link">На главную</nuxt-link>
-            <nuxt-link :to="{name: 'ForumMainPage'}" class="dropdown__link">Форум</nuxt-link>
-            <nuxt-link :to="{name: 'AboutMe'}" class="dropdown__link">Обо мне</nuxt-link>
-            <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null">
+            <NuxtLink :to="{ name: 'HomeView' }" class="dropdown__link"
+              >На главную</NuxtLink
+            >
+            <NuxtLink :to="{ name: 'ForumMainPage' }" class="dropdown__link"
+              >Форум</NuxtLink
+            >
+            <NuxtLink :to="{ name: 'AboutMe' }" class="dropdown__link"
+              >Обо мне</NuxtLink
+            >
+            <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null" />
           </nav>
-          <nuxt-link :to="{name: 'ProfileView'}" class="dropdown__link">Мой профиль</nuxt-link>
-          <nuxt-link :to="{name: 'SettingsView'}" class="dropdown__link">Настройки</nuxt-link>
-          <a href="" class="dropdown__link" @click.prevent="onSignOut">Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket" /></a>
-        </div>
-
-      </div>-->
+          <NuxtLink :to="{ name: 'ProfileView' }" class="dropdown__link"
+            >Мой профиль</NuxtLink
+          >
+          <NuxtLink :to="{ name: 'SettingsView' }" class="dropdown__link"
+            >Настройки</NuxtLink
+          >
+          <a href="" class="dropdown__link" @click.prevent="onSignOut"
+            >Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket"
+          /></a>
+        </div>-->
+      </div>
     </div>
   </header>
 </template>
