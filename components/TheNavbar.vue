@@ -8,8 +8,6 @@
         >Logo</NuxtLink
       >
 
-      <!--<a href="#" @click.prevent="onSignOut">Выйти</a>-->
-
       <div class="header__menu">
         <label class="switch">
           <input type="checkbox" v-model="isDarkMode" @click="toggleDarkMode" />
@@ -46,7 +44,7 @@
         </div>
 
         <div v-else class="header__not-auth-user">
-          <NuxtLink to="user/register" class="header__link"
+          <NuxtLink to="/user/register" class="header__link"
             >Зарегистрироваться</NuxtLink
           >
           <NuxtLink to="/user/signin" class="header__link">
@@ -140,6 +138,9 @@ $triangle-size: 8px;
     font-size: 32px;
     font-weight: bold;
     color: #fff;
+    &:hover {
+      color: #fff;
+    }
   }
 
   &__menu {
@@ -174,6 +175,12 @@ $triangle-size: 8px;
     color: #ffb579;
     &:last-child {
       color: #fff;
+    }
+    &:hover {
+      color: #ffb579;
+      &:last-child {
+        color: #fff;
+      }
     }
   }
 }
@@ -241,6 +248,9 @@ $triangle-size: 8px;
     font-size: 20px;
     line-height: 2;
     color: $dropdown-link-color;
+    &:hover {
+      color: $dropdown-link-color;
+    }
     @media (max-width: 720px) {
       & {
         font-size: 24px;

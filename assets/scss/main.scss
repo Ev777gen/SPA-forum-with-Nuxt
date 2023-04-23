@@ -1,4 +1,3 @@
-
 html,
 body {
   line-height: 1.5em;
@@ -35,7 +34,6 @@ body.dark-mode {
   }
 }
 
-
 /* Заголовки */
 .title {
   font-size: 32px;
@@ -46,7 +44,6 @@ body.dark-mode {
   line-height: 1.1;
 }
 
-
 /* Текст */
 .text_gray {
   color: #777;
@@ -54,7 +51,6 @@ body.dark-mode {
 .text_small {
   font-size: 12px;
 }
-
 
 /* Списки */
 .list__title {
@@ -78,7 +74,6 @@ body.dark-mode {
   }
 }
 
-
 /* Ссылки */
 a,
 .link {
@@ -89,9 +84,13 @@ a,
   }
 }
 
-
 /* кнопки */
-.btn, .btn_blue, .btn_green, .btn_orange, .btn_red, .btn_ghost {
+.btn,
+.btn_blue,
+.btn_green,
+.btn_orange,
+.btn_red,
+.btn_ghost {
   display: inline-block;
   padding: 15px 30px;
   border-radius: 5px;
@@ -121,7 +120,7 @@ a,
   }
 }
 .btn_green {
-  background: #57AD8D;
+  background: #57ad8d;
   &:hover:not(:disabled) {
     background: #4e9c7f;
   }
@@ -133,7 +132,7 @@ a,
   }
 }
 .btn_red {
-  background: #C82543;
+  background: #c82543;
   &:hover:not(:disabled) {
     background: #b4213c;
   }
@@ -149,7 +148,6 @@ a,
   font-size: 14px;
   letter-spacing: normal;
 }
-
 
 /* Аватар */
 $avatar: 50px;
@@ -185,7 +183,6 @@ $avatar-small: 35px;
   border-radius: 50%;
 }
 
-
 /* Формы */
 .form_narrow {
   max-width: 500px;
@@ -218,7 +215,7 @@ $avatar-small: 35px;
   transition: all 0.3s ease;
   &:disabled {
     cursor: no-drop;
-    background: #F5F8FE;
+    background: #f5f8fe;
     color: #bbbbbb;
     &::placeholder {
       color: #bbbbbb;
@@ -235,7 +232,7 @@ $avatar-small: 35px;
     background-color: white;
   }
   &:invalid {
-    border-color: #C82543;
+    border-color: #c82543;
     & ~ .form__error {
       display: block;
     }
@@ -270,7 +267,7 @@ textarea.form__input {
 }
 @media (min-width: 240px) and (max-width: 720px) {
   .form_button {
-      width: 100%;
+    width: 100%;
   }
 }
 .form__btn-group {
@@ -288,7 +285,6 @@ textarea.form__input {
     margin-top: 25px;
   }
 }
-
 
 /* Адаптив */
 @media (max-width: 720px) {

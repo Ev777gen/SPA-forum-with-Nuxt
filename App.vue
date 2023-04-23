@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 //import NProgress from 'nprogress';
 import useDarkMode from "@/composables/useDarkMode";
 
