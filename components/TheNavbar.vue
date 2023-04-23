@@ -1,8 +1,12 @@
 <template>
   <header class="header">
     <div class="header__body container">
-
-      <NuxtLink to="/" v-if="!isMobile || (authUser && isMobile)" class="header__logo">Logo</NuxtLink>
+      <NuxtLink
+        to="/"
+        v-if="!isMobile || (authUser && isMobile)"
+        class="header__logo"
+        >Logo</NuxtLink
+      >
 
       <a href="#" @click.prevent="onSignOut">Выйти</a>
 
@@ -54,7 +58,6 @@
         </div>
 
       </div>-->
-      
     </div>
   </header>
 </template>
@@ -80,19 +83,23 @@ async function onCreated() {
   router.beforeEach(() => {
     isDropdownOpen.value = false;
   });
-  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+  if (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  ) {
     isMobile.value = true;
   } else {
     isMobile.value = false;
   }
 }
 
-function onSignOut () {
+function onSignOut() {
   signOutUser();
   isDropdownOpen.value = false;
 }
 
-function onClickOutside () {
+function onClickOutside() {
   isDropdownOpen.value = false;
 }
 </script>
@@ -187,7 +194,6 @@ $triangle-size: 8px;
   }
 }
 
-
 .dropdown {
   position: absolute;
   display: block;
@@ -203,9 +209,9 @@ $triangle-size: 8px;
   z-index: 1000;
 
   &::after {
-    content: ''; 
+    content: "";
     position: absolute;
-    right: 25px; 
+    right: 25px;
     top: calc(-2 * $triangle-size);
     border: $triangle-size solid transparent;
     border-bottom: $triangle-size solid $dropdown-color;
@@ -241,7 +247,6 @@ $triangle-size: 8px;
     visibility: visible;
   }
 }
-
 
 /* The switch - the box around the slider */
 $switch-width: 36px;

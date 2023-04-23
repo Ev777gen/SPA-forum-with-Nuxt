@@ -18,26 +18,25 @@ export const db = getFirestore(firebaseApp);
 //export const storage = getStorage(firebaseApp);
 */
 
+import { findItemById } from "../helpers";
 
-import { findItemById } from '../helpers';
-
-import { 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  setDoc, 
-  updateDoc, 
-  arrayUnion, 
-  writeBatch, 
-  serverTimestamp, 
-  increment, 
-  onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  writeBatch,
+  serverTimestamp,
+  increment,
+  onSnapshot,
+} from "firebase/firestore";
 
 //import chunk from 'lodash/chunk';
 
-
-export default function() {
+export default function () {
   const { $firestore: db } = useNuxtApp();
 
   let categories = useState("categories", () => []);
@@ -47,7 +46,7 @@ export default function() {
   let users = useState("users", () => []);
   let unsubscribes = useState("unsubscribes", () => []);
   let isAsyncDataLoaded = useState("isAsyncDataLoaded", () => true);
-/*
+  /*
   const user = (id) => {
     const user = findItemById(users.value, id);
     //const user = users.value.find(user => user.id === id);
@@ -72,67 +71,73 @@ export default function() {
   const user = computed(() => {
     return (id) => {
       //const user = findItemById(users.value, id);
-      const user = users.value.find(user => user.id === id);
+      const user = users.value.find((user) => user.id === id);
       if (!user) return null;
       return {
         ...user,
-        get posts () {
-          return posts.value.filter(post => post.userId === user.id);
+        get posts() {
+          return posts.value.filter((post) => post.userId === user.id);
         },
-        get postsCount () {
+        get postsCount() {
           return user.postsCount || 0;
         },
-        get threads () {
-          return threads.value.filter(post => post.userId === user.id);
+        get threads() {
+          return threads.value.filter((post) => post.userId === user.id);
         },
-        get threadsCount () {
+        get threadsCount() {
           return user.threadsStarted?.length || 0;
-        }
-      }
-    }
+        },
+      };
+    };
   });
 
   const thread = computed(() => {
     return (id) => {
       //const thread = findItemById(state.threads, id);
-      const thread = threads.value.find(thread => thread.id === id);
+      const thread = threads.value.find((thread) => thread.id === id);
       if (!thread) return {};
       return {
         ...thread,
-        get author () {
+        get author() {
           //return findItemById(state.users, thread.userId);
-          return users.value.find(user => user.id === thread.userId);
+          return users.value.find((user) => user.id === thread.userId);
         },
-        get repliesCount () {
+        get repliesCount() {
           return thread.postIds.length - 1;
         },
-        get contributorsCount () {
+        get contributorsCount() {
           if (!thread.contributorIds) return 0;
           return thread.contributorIds.length;
-        }
-      }
-    }
+        },
+      };
+    };
   });
 
   //------------------------------------------------------------
   // Чтение из БД Cloud Firestore
   //------------------------------------------------------------
-  // Создаем два универсальных метода для чтения из базы данных: 
-  function fetchItem({ id, resource, handleUnsubscribe = null, once = false, callBack = null }) {
-    return new Promise(resolve => {
+  // Создаем два универсальных метода для чтения из базы данных:
+  function fetchItem({
+    id,
+    resource,
+    handleUnsubscribe = null,
+    once = false,
+    callBack = null,
+  }) {
+    return new Promise((resolve) => {
       const docRef = doc(db, resource, id);
-      const unsubscribe = onSnapshot(docRef, doc => {
+      const unsubscribe = onSnapshot(docRef, (doc) => {
         if (once) unsubscribe();
 
         if (doc.exists()) {
           const item = { ...doc.data(), id: doc.id };
           let previousItem = findItemById(useState(resource).value, id);
           previousItem = previousItem ? { ...previousItem } : null;
-          console.log('fetchItem item', item)
-          console.log('fetchItem resource', resource)
-          console.log('fetchItem resource.value', resource.value)
-          pushItemToStore(useState(resource).value, item);
-          if (typeof callBack === 'function') {
+          console.log("fetchItem item", item);
+          console.log("fetchItem resource", resource);
+          console.log("fetchItem resource.value", resource.value);
+          pushItemToStore(resource, item);
+          if (typeof callBack === "function") {
             const isLocal = doc.metadata.hasPendingWrites;
             callBack({ item: { ...item }, previousItem, isLocal });
           }
@@ -140,51 +145,51 @@ export default function() {
         } else {
           resolve(null);
         }
-      })
+      });
       if (handleUnsubscribe) {
         handleUnsubscribe(unsubscribe);
       } else {
         unsubscribes.value.push(unsubscribe);
       }
-    })
+    });
   }
 
   function fetchItems({ ids, resource, callBack = null }) {
     ids = ids || [];
-    return Promise.all(ids.map(id => fetchItem({ id, resource, callBack })));
+    return Promise.all(ids.map((id) => fetchItem({ id, resource, callBack })));
   }
 
-  async function unsubscribeAllSnapshots () {
-    unsubscribes.value.forEach(unsubscribe => unsubscribe());
+  async function unsubscribeAllSnapshots() {
+    unsubscribes.value.forEach((unsubscribe) => unsubscribe());
     unsubscribes.value = [];
   }
 
   // Создаем на их основе методы чтения из базы данных
   // Для одного item
-  function fetchCategory({id}) {
-    return fetchItem({ resource: 'categories', id });
+  function fetchCategory({ id }) {
+    return fetchItem({ resource: "categories", id });
   }
 
-  function fetchForum({id}) {
-    return fetchItem({ resource: 'forums', id });
+  function fetchForum({ id }) {
+    return fetchItem({ resource: "forums", id });
   }
 
-  function fetchThread({id}) {
-    return fetchItem({ resource: 'threads', id });
+  function fetchThread({ id }) {
+    return fetchItem({ resource: "threads", id });
   }
 
-  function fetchPost({id}) {
-    return fetchItem({ resource: 'posts', id });
+  function fetchPost({ id }) {
+    return fetchItem({ resource: "posts", id });
   }
 
-  function fetchUser({id}) {
-    return fetchItem({ resource: 'users', id });
+  function fetchUser({ id }) {
+    return fetchItem({ resource: "users", id });
   }
 
   // Для нескольких items
   async function fetchAllCategories() {
     let categories = [];
-    const querySnapshot = await getDocs(collection(db, 'categories'));
+    const querySnapshot = await getDocs(collection(db, "categories"));
     querySnapshot.forEach((doc) => {
       const item = { ...doc.data(), id: doc.id };
       categories.push(item);
@@ -193,15 +198,15 @@ export default function() {
     return Promise.resolve(categories);
   }
 
-  function fetchForums({ids}) {
-    return fetchItems({ resource: 'forums', ids });
+  function fetchForums({ ids }) {
+    return fetchItems({ resource: "forums", ids });
   }
 
-  function fetchThreads({ids}) {
-    return fetchItems({ resource: 'threads', ids });
+  function fetchThreads({ ids }) {
+    return fetchItems({ resource: "threads", ids });
   }
 
-  function fetchThreadsByPage ({ ids = [], page, threadsPerPage = 10 }) {
+  function fetchThreadsByPage({ ids = [], page, threadsPerPage = 10 }) {
     if (ids.length === 0) return [];
     threads.value = [];
     const chunks = chunk(ids, threadsPerPage);
@@ -209,14 +214,14 @@ export default function() {
     return fetchThreads({ ids: limitedIds });
   }
 
-  function fetchPosts({ids}) {
-    return fetchItems({ resource: 'posts', ids });
+  function fetchPosts({ ids }) {
+    return fetchItems({ resource: "posts", ids });
   }
 
-  function fetchUsers({ids}) {
-    return fetchItems({ resource: 'users', ids });
+  function fetchUsers({ ids }) {
+    return fetchItems({ resource: "users", ids });
   }
-  
+
   //------------------------------------------------------------
   // Запись в БД Cloud Firestore
   //------------------------------------------------------------
@@ -225,32 +230,38 @@ export default function() {
     const auth = useAuth();
     const userId = auth.authId;
     const publishedAt = serverTimestamp();
-    const threadRef = doc(collection(db, 'threads'));
+    const threadRef = doc(collection(db, "threads"));
     const thread = { forumId, title, publishedAt, userId, id: threadRef.id };
-    const userRef = doc(db, 'users', userId);
-    const forumRef = doc(db, 'forums', forumId);
+    const userRef = doc(db, "users", userId);
+    const forumRef = doc(db, "forums", forumId);
     const batch = writeBatch(db);
-    // Добавляем thread в базу данных Cloud Firestore: 
+    // Добавляем thread в базу данных Cloud Firestore:
     // - сам thread добавляем в коллекцию threads
     // - его id добавляем в соответствующий форум
     // - его id добавляем пользователю, который его создал
     batch.set(threadRef, thread);
     batch.update(userRef, {
-      threadsStarted: arrayUnion(threadRef.id)
+      threadsStarted: arrayUnion(threadRef.id),
     });
     batch.update(forumRef, {
-      threadIds: arrayUnion(threadRef.id)
+      threadIds: arrayUnion(threadRef.id),
     });
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newThread = await getDoc(threadRef);
     pushItemToStore(threads.value, { ...newThread.data(), id: newThread.id });
-    
+
     //commit('appendThreadToUser', { parentId: userId, childId: threadRef.id });
-    appendChildToParent({child: 'threadsStarted', parent: 'users'})(users.value, { parentId: userId, childId: threadRef.id });  // !!!!!!!!!!!!!!!!
+    appendChildToParent({ child: "threadsStarted", parent: "users" })(
+      users.value,
+      { parentId: userId, childId: threadRef.id }
+    ); // !!!!!!!!!!!!!!!!
     //commit('appendThreadToForum', { parentId: forumId, childId: threadRef.id });
-    appendChildToParent({child: 'threadIds', parent: 'forums'})(forums.value, { parentId: forumId, childId: threadRef.id }); // !!!!!!!!!!!!!!!!!!!!
-    
+    appendChildToParent({ child: "threadIds", parent: "forums" })(
+      forums.value,
+      { parentId: forumId, childId: threadRef.id }
+    ); // !!!!!!!!!!!!!!!!!!!!
+
     // Создаем первый пост в теме
     await createPost({ text, threadId: threadRef.id, firstInThread: true });
     // Возвращаем новую thread
@@ -263,8 +274,8 @@ export default function() {
     const post = findItemById(posts.value, thread.postIds[0]);
     let newThread = { ...thread, title };
     let newPost = { ...post, text };
-    const threadRef = doc(db, 'threads', id);
-    const postRef = doc(db, 'posts', post.id);
+    const threadRef = doc(db, "threads", id);
+    const postRef = doc(db, "posts", post.id);
     const batch = writeBatch(db);
     // Изменяем thread в базе данных Cloud Firestore:
     batch.update(threadRef, newThread);
@@ -286,31 +297,37 @@ export default function() {
     post.publishedAt = serverTimestamp();
     post.firstInThread = post.firstInThread || false;
     const batch = writeBatch(db);
-    const postRef = doc(collection(db, 'posts'));
-    const threadRef = doc(db, 'threads', post.threadId);
-    const userRef = doc(db, 'users', auth.authId);
-    // Добавляем пост в базу данных Cloud Firebase: 
+    const postRef = doc(collection(db, "posts"));
+    const threadRef = doc(db, "threads", post.threadId);
+    const userRef = doc(db, "users", auth.authId);
+    // Добавляем пост в базу данных Cloud Firebase:
     // - сам пост добавляем в коллекцию постов posts
     // - id поста добавляем в соответствующий thread
     // - id пользователя, написавшего пост, тоже добавлям в этот же thread
     batch.set(postRef, post);
     const threadUpdates = {
-      postIds: arrayUnion(postRef.id)
+      postIds: arrayUnion(postRef.id),
     };
     if (!post.firstInThread) {
       threadUpdates.contributorIds = arrayUnion(auth.authId);
     }
     batch.update(threadRef, threadUpdates);
     batch.update(userRef, {
-      postsCount: increment(1)
+      postsCount: increment(1),
     });
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newPost = await getDoc(postRef);
     pushItemToStore(posts.value, { ...newPost.data(), id: newPost.id });
-    appendChildToParent({child: 'postIds', parent: 'threads'})(threads.value, { childId: newPost.id, parentId: post.threadId });
+    appendChildToParent({ child: "postIds", parent: "threads" })(
+      threads.value,
+      { childId: newPost.id, parentId: post.threadId }
+    );
     if (!post.firstInThread) {
-      appendChildToParent({child: 'contributorIds', parent: 'threads'})(threads.value, { childId: auth.authId, parentId: post.threadId });
+      appendChildToParent({ child: "contributorIds", parent: "threads" })(
+        threads.value,
+        { childId: auth.authId, parentId: post.threadId }
+      );
     }
   }
 
@@ -321,10 +338,10 @@ export default function() {
       edited: {
         at: serverTimestamp(),
         by: auth.authId,
-        moderated: false
-      }
+        moderated: false,
+      },
     };
-    const postRef = doc(db, 'posts', id);
+    const postRef = doc(db, "posts", id);
     await updateDoc(postRef, post);
     const updatedPost = await getDoc(postRef);
     pushItemToStore(posts.value, updatedPost);
@@ -339,9 +356,9 @@ export default function() {
       name,
       username,
       usernameLower,
-      registeredAt
+      registeredAt,
     };
-    const userRef = doc(db, 'users', id);
+    const userRef = doc(db, "users", id);
     await setDoc(userRef, user);
     const newUser = await getDoc(userRef);
     pushItemToStore(this.users, newUser);
@@ -355,13 +372,13 @@ export default function() {
       name: user.name || null,
       bio: user.bio || null,
       website: user.website || null,
-      email: user.email || null
-    }
-    const userRef = doc(db, 'users', user.id);
+      email: user.email || null,
+    };
+    const userRef = doc(db, "users", user.id);
     await updateDoc(userRef, userUpdates);
     pushItemToStore(users.value, user);
   }
-    
+
   //------------------------------------------------------------
   // Другие методы
   //------------------------------------------------------------
@@ -375,36 +392,40 @@ export default function() {
   }
 
   // Вспомогательные функции
-  function appendChildToParent({child, parent}) {
+  function appendChildToParent({ child, parent }) {
     return (parentResource, { childId, parentId }) => {
-      const resource = parentResource.find(r => r.id === parentId);
+      const resource = parentResource.find((r) => r.id === parentId);
       if (!resource) {
-        console.warn(`Не удалось добавить ${child} ${childId} к ${parent} ${parentId} т.к. родитель не существует.`);
+        console.warn(
+          `Не удалось добавить ${child} ${childId} к ${parent} ${parentId} т.к. родитель не существует.`
+        );
         return;
       }
       resource[child] = resource[child] || [];
-      if (!resource[child].includes(childId)) { // Чтобы добавить пользователя в список только один раз
+      if (!resource[child].includes(childId)) {
+        // Чтобы добавить пользователя в список только один раз
         resource[child].push(childId);
       }
-    }
+    };
   }
-  function pushItemToStore(resources, item) {
-    console.log('pushItemToStore', '1')
-    const index = resources.findIndex(r => r.id === item.id);
-    console.log('pushItemToStore', '2', index)
+  function pushItemToStore(resource, item) {
+    const resourceArray = useState(resource).value;
+    //console.log("pushItemToStore", "1");
+    const index = resourceArray.findIndex((r) => r.id === item.id);
+    //console.log("pushItemToStore", "2", index);
     if (item.id && index !== -1) {
-      resources[index] = item;
+      resourceArray[index] = item;
     } else {
-      resources.push(item);
+      resourceArray.push(item);
     }
-    console.log('pushItemToStore', '3', resources)
+    //console.log("pushItemToStore", "3", resourceArray);
   }
   function makeResourceFromDoc(doc) {
-    if (typeof doc?.data !== 'function') return doc;
+    if (typeof doc?.data !== "function") return doc;
     return { ...doc.data(), id: doc.id };
   }
 
-  return { 
+  return {
     user,
     thread,
     unsubscribeAllSnapshots, // ???
