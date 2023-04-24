@@ -20,7 +20,7 @@
           v-click-outside="onClickOutside"
           class="header__user-avatar"
         >
-          <AppAvatar
+          <UserAvatar
             class="header__avatar avatar_small"
             :src="authUser?.avatar"
             :alt="`${authUser.name} profile image`"

@@ -1,17 +1,16 @@
 <template>
   <div class="form_narrow">
-    SignIn
-    <!--<VeeForm @submit="signIn">
+    <VeeForm @submit="signIn">
       <h1 class="form__title title">Войти</h1>
 
-      <AppFormField
+      <UiFormField
         label="e-mail"
         name="email"
         type="email"
         v-model="form.email"
         rules="required|email"
       />
-      <AppFormField
+      <UiFormField
         label="Пароль"
         name="password"
         type="password"
@@ -22,7 +21,7 @@
       <div class="form__btn-group">
         <div>
           <span>Еще не зарегистрированы? </span>
-          <router-link :to="{name: 'RegisterForm'}">Создайте аккаунт</router-link>
+          <router-link :to="`/user/register`">Создайте аккаунт</router-link>
         </div>
         <button
           type="submit"
@@ -32,36 +31,32 @@
           Войти
         </button>
       </div>
-    </VeeForm>-->
+    </VeeForm>
   </div>
 </template>
 
-<script setup lang="ts">
-/*import { reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useAuthStore } from "@/stores/AuthStore";
-
+<script setup>
 const form = reactive({
   email: "",
   password: "",
 });
 
-const { signInWithEmailAndPassword } = useAuthStore();
+const { signInUserWithEmailAndPassword } = useAuth();
 
 const router = useRouter();
 const route = useRoute();
 
 async function signIn() {
   try {
-    await signInWithEmailAndPassword({ ...form });
-    successRedirect();
+    await signInUserWithEmailAndPassword({ ...form });
+    //successRedirect();
   } catch (error) {
     alert(error.message);
   }
 }
 
-function successRedirect() {
-  const redirectTo = route.query.redirectTo || { name: "HomeView" };
+/*function successRedirect() {
+  const redirectTo = route.query.redirectTo || "/";
   router.push(redirectTo);
 }*/
 </script>

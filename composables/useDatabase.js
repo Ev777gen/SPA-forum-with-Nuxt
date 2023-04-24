@@ -118,8 +118,8 @@ export default function () {
   //------------------------------------------------------------
   // Создаем два универсальных метода для чтения из базы данных:
   function fetchItem({
-    id,
     resource,
+    id,
     handleUnsubscribe = null,
     once = false,
     callBack = null,

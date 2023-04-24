@@ -1,29 +1,28 @@
 <template>
   <div class="form_narrow">
-    Register
-    <!--<VeeForm @submit="register">
+    <VeeForm @submit="register">
       <h1 class="form__title title">Форма регистрации</h1>
 
-      <AppFormField
+      <UiFormField
         v-model="form.name"
         name="name"
         label="Имя"
         rules="required"
       />
-      <AppFormField
+      <UiFormField
         v-model="form.username"
         name="username"
         label="Логин"
         rules="required|unique:users,username"
       />
-      <AppFormField
+      <UiFormField
         v-model="form.email"
         name="email"
         label="e-mail"
         rules="required|email|unique:users,email"
         type="email"
       />
-      <AppFormField
+      <UiFormField
         v-model="form.password"
         name="password"
         label="Пароль"
@@ -34,15 +33,11 @@
       <div class="form__btn-group">
         <button type="submit" class="btn_blue">Зарегистрироваться</button>
       </div>
-    </VeeForm>-->
+    </VeeForm>
   </div>
 </template>
 
-<script setup lang="ts">
-/*import { reactive } from "vue";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "@/stores/AuthStore";
-
+<script setup>
 const router = useRouter();
 
 const form = reactive({
@@ -52,7 +47,7 @@ const form = reactive({
   password: "",
 });
 
-const { registerUserWithEmailAndPassword } = useAuthStore();
+const { registerUserWithEmailAndPassword } = useAuth();
 
 async function register() {
   try {
@@ -61,5 +56,5 @@ async function register() {
   } catch (error) {
     alert(error.message);
   }
-}*/
+}
 </script>

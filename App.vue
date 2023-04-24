@@ -16,7 +16,8 @@
       </aside>
       <main class="app__content">
         <!-- <TheBreadcrumbs />-->
-        <NuxtPage />
+        <NuxtPage v-show="isAsyncDataLoaded" />
+        <UiSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />
         <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
         <!--<AppSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />-->
       </main>
@@ -33,6 +34,7 @@ import useDarkMode from "@/composables/useDarkMode";
 //const { isAsyncDataLoaded } = storeToRefs(useForumStore());
 const { authUser, fetchAuthUser } = useAuth();
 const { isDarkMode } = useDarkMode();
+const isAsyncDataLoaded = useState("isAsyncDataLoaded");
 
 fetchAsyncData();
 

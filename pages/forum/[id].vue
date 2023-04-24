@@ -5,40 +5,35 @@
         <h1 class="forum__title title">{{ forum.name }}</h1>
         <p class="forum__description">{{ forum.description }}</p>
       </div>
-      <!--<NuxtLink
+      <NuxtLink
         v-if="authUser"
-        :to="{name:'ThreadCreate', params: {forumId: forum.id}}"
+        :to="`/forum/thread/create/${forum.id}`"
         class="forum__button btn_orange btn_small"
       >
         Начать новую тему
-      </NuxtLink>-->
+      </NuxtLink>
     </div>
-    Forum page
-    <!--<div class="forum__thread-list">
-      <ThreadList :threads="threadsToDisplay"/>
+
+    <div class="forum__thread-list">
+      <ForumThreadList :threads="threadsToDisplay" />
     </div>
     <div v-if="totalPagesCount > 1" class="pagination">
-      <v-pagination
+      <!-- <v-pagination
         v-model="page"
         :pages="totalPagesCount"
         active-color="#DCEDFF"
-      />
-    </div>-->
+      /> -->
+    </div>
   </div>
 </template>
 
 <script setup>
 import { findItemById } from "@/helpers";
 
-const props = defineProps({
-  id: {
-    type: String,
-    required: true,
-  },
-});
-
 const router = useRouter();
 const route = useRoute();
+
+const id = route.params.id;
 
 const page = ref(parseInt(route.query.page) || 1);
 const threadsPerPage = 10;
@@ -59,7 +54,7 @@ const {
 } = useDatabase();
 
 const forum = computed(() => {
-  return findItemById(forums.value, props.id);
+  return findItemById(forums.value, id);
 });
 
 const threadsToDisplay = computed(() => {
@@ -70,7 +65,8 @@ const threadsToDisplay = computed(() => {
 });
 
 const threadsCount = computed(() => {
-  return forum.value.threadIds?.length || 0;
+  if (!forum.value) return 0;
+  return forum.value.threadIds?.length;
 });
 
 const totalPagesCount = computed(() => {
@@ -86,20 +82,25 @@ fetchAsyncData();
 
 async function fetchAsyncData() {
   try {
-    //startLoadingIndicator();
-    const forum = await fetchForum({ id: props.id });
-    const threads = await fetchThreadsByPage({
+    startLoadingIndicator();
+    const forum = await fetchForum({ id });
+    const threads = await fetchThreads({
       ids: forum.threadIds,
       page: page.value,
       threadsPerPage,
     });
+    /*const threads = await fetchThreadsByPage({
+      ids: forum.threadIds,
+      page: page.value,
+      threadsPerPage,
+    });*/
     const users = await fetchUsers({
       ids: threads.map((thread) => thread.userId),
     });
-    //stopLoadingIndicator();
+    stopLoadingIndicator();
   } catch (err) {
     console.log(err);
-    //stopLoadingIndicator();
+    stopLoadingIndicator();
   }
 }
 </script>

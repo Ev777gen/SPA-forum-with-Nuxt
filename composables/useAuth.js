@@ -138,7 +138,6 @@ export default function () {
   }
 
   return {
-    authId,
     authUser,
     registerUserWithEmailAndPassword,
     signInUserWithEmailAndPassword,

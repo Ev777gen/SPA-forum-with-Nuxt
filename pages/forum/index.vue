@@ -6,8 +6,9 @@
 </template>
 
 <script setup>
-const categories = useState("categories").value;
-const isAsyncDataLoaded = useState("isAsyncDataLoaded").value;
+const categories = useState("categories");
+const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+
 const {
   fetchAllCategories,
   fetchForums,
@@ -18,13 +19,13 @@ const {
 fetchAsyncData();
 
 async function fetchAsyncData() {
-  //startLoadingIndicator();
+  startLoadingIndicator();
   const categoriesToDisplay = await fetchAllCategories();
   const forumIds = categoriesToDisplay
     .map((category) => category.forumIds)
     .flat();
   await fetchForums({ ids: forumIds });
-  //stopLoadingIndicator();
+  stopLoadingIndicator();
 }
 </script>
 
