@@ -133,9 +133,9 @@ export default function () {
           const item = { ...doc.data(), id: doc.id };
           let previousItem = findItemById(useState(resource).value, id);
           previousItem = previousItem ? { ...previousItem } : null;
-          console.log("fetchItem item", item);
-          console.log("fetchItem resource", resource);
-          console.log("fetchItem resource.value", resource.value);
+          //console.log("fetchItem item", item);
+          //console.log("fetchItem resource", resource);
+          //console.log("fetchItem resource.value", resource.value);
           pushItemToStore(resource, item);
           if (typeof callBack === "function") {
             const isLocal = doc.metadata.hasPendingWrites;
@@ -193,7 +193,7 @@ export default function () {
     querySnapshot.forEach((doc) => {
       const item = { ...doc.data(), id: doc.id };
       categories.push(item);
-      pushItemToStore(categories.value, item);
+      pushItemToStore("categories", item);
     });
     return Promise.resolve(categories);
   }
@@ -420,6 +420,19 @@ export default function () {
     }
     //console.log("pushItemToStore", "3", resourceArray);
   }
+  /*
+  function pushItemToStore(resource, item) {
+    //console.log("pushItemToStore", "1");
+    const index = resource.findIndex((r) => r.id === item.id);
+    //console.log("pushItemToStore", "2", index);
+    if (item.id && index !== -1) {
+      resource[index] = item;
+    } else {
+      resource.push(item);
+    }
+    //console.log("pushItemToStore", "3", resourceArray);
+  }
+  */
   function makeResourceFromDoc(doc) {
     if (typeof doc?.data !== "function") return doc;
     return { ...doc.data(), id: doc.id };
