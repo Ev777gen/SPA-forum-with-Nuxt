@@ -63,7 +63,7 @@
             <NuxtLink to="/aboutme" class="dropdown__link">Обо мне</NuxtLink>
             <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null" />
           </nav>
-          <NuxtLink to="/user/profile" class="dropdown__link"
+          <NuxtLink :to="`/user/profile/${authUser?.id}`" class="dropdown__link"
             >Мой профиль</NuxtLink
           >
           <NuxtLink to="/user/settings" class="dropdown__link"
