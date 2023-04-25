@@ -18,8 +18,6 @@ export const db = getFirestore(firebaseApp);
 //export const storage = getStorage(firebaseApp);
 */
 
-import { findItemById } from "../helpers";
-
 import {
   collection,
   doc,

@@ -26,9 +26,6 @@
 </template>
 
 <script setup>
-import { forumThreadsCountWording } from "~/helpers";
-import useDarkMode from "@/composables/useDarkMode";
-
 defineProps({
   forums: {
     type: Array,

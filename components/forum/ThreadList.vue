@@ -51,9 +51,6 @@
 </template>
 
 <script setup>
-import { localeDate, findItemById, repliesCountWording } from "@/helpers";
-import useDarkMode from "~/composables/useDarkMode";
-
 defineProps({
   threads: {
     type: Array,

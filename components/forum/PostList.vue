@@ -58,13 +58,6 @@
 </template>
 
 <script setup>
-import {
-  localeDate,
-  userPostsCountWording,
-  userThreadsCountWording,
-} from "@/helpers";
-import useDarkMode from "~/composables/useDarkMode";
-
 defineProps({
   posts: {
     type: Array,

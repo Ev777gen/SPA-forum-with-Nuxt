@@ -52,9 +52,6 @@
 </template>
 
 <script setup>
-import { localeDate } from "@/helpers";
-import useDarkMode from "@/composables/useDarkMode";
-
 defineProps({
   user: {
     type: Object,

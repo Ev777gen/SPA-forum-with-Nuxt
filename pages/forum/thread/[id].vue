@@ -52,8 +52,6 @@
 </template>
 
 <script setup>
-import { localeDate, repliesCountWording } from "@/helpers";
-
 const route = useRoute();
 const id = route.params.id;
 

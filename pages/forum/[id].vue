@@ -28,8 +28,6 @@
 </template>
 
 <script setup>
-import { findItemById } from "@/helpers";
-
 const router = useRouter();
 const route = useRoute();
 
