@@ -49,16 +49,16 @@ const route = useRoute();
 async function signIn() {
   try {
     await signInUserWithEmailAndPassword({ ...form });
-    //successRedirect();
+    successRedirect();
   } catch (error) {
     alert(error.message);
   }
 }
 
-/*function successRedirect() {
+function successRedirect() {
   const redirectTo = route.query.redirectTo || "/";
   router.push(redirectTo);
-}*/
+}
 </script>
 
 <style lang="scss" scoped>

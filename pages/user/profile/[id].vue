@@ -47,6 +47,10 @@ watch(userToDisplay, (newValue) => {
   }
 });
 
+definePageMeta({
+  middleware: "auth-required",
+});
+
 fetchAsyncData();
 
 async function fetchAsyncData() {

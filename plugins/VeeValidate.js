@@ -3,7 +3,7 @@ import { required, email, min, url } from "@vee-validate/rules";
 import { localize } from "@vee-validate/i18n";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-export default (nuxtApp) => {
+export default defineNuxtPlugin((nuxtApp) => {
   const { $firestore: db } = useNuxtApp();
   // Задаем правила валидации.
   // В качестве функций для этих правил берем
@@ -60,7 +60,7 @@ export default (nuxtApp) => {
   nuxtApp.vueApp.component("VeeForm", Form);
   nuxtApp.vueApp.component("VeeField", Field);
   nuxtApp.vueApp.component("VeeErrorMessage", ErrorMessage);
-};
+});
 
 // Примечание: здесь не реализована проверка уникальности логина
 // В данном случае логин избыточный, т.к. регистрация производится
