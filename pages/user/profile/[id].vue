@@ -47,10 +47,6 @@ watch(userToDisplay, (newValue) => {
   }
 });
 
-definePageMeta({
-  middleware: "auth-required",
-});
-
 fetchAsyncData();
 
 async function fetchAsyncData() {
@@ -60,6 +56,13 @@ async function fetchAsyncData() {
     stopLoadingIndicator();
   }
 }
+
+definePageMeta({
+  isAuthRequired: true,
+});
+// definePageMeta({
+//   middleware: "auth-required",
+// });
 </script>
 
 <style lang="scss">

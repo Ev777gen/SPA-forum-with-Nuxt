@@ -4,7 +4,7 @@
       <p>{{ thread.title }}</p>
       <NuxtLink
         v-if="thread.userId === authUser?.id"
-        :to="`/forum/thread/edit${id}`"
+        :to="`/forum/${$route.params.forumId}/thread/${id}/edit`"
       >
         <button class="thread__button btn_small btn_green">
           Редактировать тему
@@ -39,21 +39,20 @@
     <ForumPostEditor v-if="authUser" @save="addPost" />
     <div v-else class="thread__no-auth-user">
       Чтобы написать пост, нужно
-      <!-- <NuxtLink :to="`/user/signin`', query: { redirectTo: $route.path } }"
+      <NuxtLink :to="`/user/signin?redirectTo=${$route.path}`"
         >Войти</NuxtLink
       >
       или
-      <NuxtLink
-        :to="{ name: 'RegisterForm', query: { redirectTo: $route.path } }"
+      <NuxtLink :to="`/user/register?redirectTo=${$route.path}`"
         >Зарегистрироваться</NuxtLink
-      > -->
+      >
     </div>
   </div>
 </template>
 
 <script setup>
 const route = useRoute();
-const id = route.params.id;
+const id = route.params.threadId;
 
 const { authUser } = useAuth();
 const posts = useState("posts");

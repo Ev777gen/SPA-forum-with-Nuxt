@@ -59,6 +59,10 @@ function successRedirect() {
   const redirectTo = route.query.redirectTo || "/";
   router.push(redirectTo);
 }
+
+definePageMeta({
+  isForGuests: true,
+});
 </script>
 
 <style lang="scss" scoped>

@@ -13,7 +13,7 @@
     >
       <div>
         <p class="thread__title">
-          <NuxtLink :to="`/forum/thread/${thread.id}`">{{
+          <NuxtLink :to="`/forum/${$route.params.forumId}/thread/${thread.id}`">{{
             thread.title
           }}</NuxtLink>
         </p>

@@ -60,47 +60,25 @@
 </template>
 
 <script setup>
-const { authId, authUser, signInUserWithEmailAndPassword } = useAuth();
+const { authUser, signInUserWithEmailAndPassword } = useAuth();
+const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useDatabase();
 
 const nuxtApp = useNuxtApp();
-//const auth = nuxtApp.$auth;
-
-async function logInWithDefaultUser() {
-  //try {
-  //startLoadingIndicator();
-  //const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
-  const credentials = await signInUserWithEmailAndPassword({
-    email: "email@mail.ru",
-    password: "123456",
-  });
-  console.log("credentials", credentials);
-  console.log("auth", nuxtApp.$auth);
-  console.log("authUser", authUser.value);
-  console.log("authId", authId.value);
-  //stopLoadingIndicator();
-  //} catch (error) {
-  //  alert(error.message);
-  //}
-}
-
-/*import { storeToRefs } from 'pinia';
-import { useAuthStore } from '@/stores/AuthStore';
-import { useForumStore } from '@/stores/ForumStore';
-
-const { authUser } = storeToRefs(useAuthStore());
-const { signInWithEmailAndPassword } = useAuthStore();
-const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useForumStore();
 
 async function logInWithDefaultUser() {
   try {
-    startLoadingIndicator();
-    const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
-    await signInWithEmailAndPassword({ email: defaultUser.email, password: '123456' });
-    stopLoadingIndicator();
+  startLoadingIndicator();
+  const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
+  const credentials = await signInUserWithEmailAndPassword({
+    email: defaultUser.email,
+    password: "123456",
+  });
+  stopLoadingIndicator();
   } catch (error) {
-    alert(error.message);
+   alert(error.message);
+   stopLoadingIndicator();
   }
-}*/
+}
 </script>
 
 <style lang="scss" scoped>

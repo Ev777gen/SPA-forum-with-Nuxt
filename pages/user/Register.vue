@@ -57,4 +57,8 @@ async function register() {
     alert(error.message);
   }
 }
+
+definePageMeta({
+  isForGuests: true,
+});
 </script>

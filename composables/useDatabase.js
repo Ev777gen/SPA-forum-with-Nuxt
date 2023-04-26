@@ -131,9 +131,6 @@ export default function () {
           const item = { ...doc.data(), id: doc.id };
           let previousItem = findItemById(useState(resource).value, id);
           previousItem = previousItem ? { ...previousItem } : null;
-          //console.log("fetchItem item", item);
-          //console.log("fetchItem resource", resource);
-          //console.log("fetchItem resource.value", resource.value);
           pushItemToStore(resource, item);
           if (typeof callBack === "function") {
             const isLocal = doc.metadata.hasPendingWrites;
@@ -247,7 +244,7 @@ export default function () {
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newThread = await getDoc(threadRef);
-    pushItemToStore(threads.value, { ...newThread.data(), id: newThread.id });
+    pushItemToStore('threads', { ...newThread.data(), id: newThread.id });
 
     //commit('appendThreadToUser', { parentId: userId, childId: threadRef.id });
     appendChildToParent({ child: "threadsStarted", parent: "users" })(
@@ -282,9 +279,10 @@ export default function () {
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     newThread = await getDoc(threadRef);
     newPost = await getDoc(postRef);
-    pushItemToStore(threads.value, newThread);
-    pushItemToStore(posts.value, newPost);
+    pushItemToStore('threads', newThread.data());
+    pushItemToStore('posts', newPost.data());
     // Возвращаем обновленную thread
+    console.log('updateThread', '8', threads.value, posts.value)
     return makeResourceFromDoc(newThread);
   }
 
@@ -316,7 +314,7 @@ export default function () {
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newPost = await getDoc(postRef);
-    pushItemToStore(posts.value, { ...newPost.data(), id: newPost.id });
+    pushItemToStore('posts', { ...newPost.data(), id: newPost.id });
     appendChildToParent({ child: "postIds", parent: "threads" })(
       threads.value,
       { childId: newPost.id, parentId: post.threadId }
@@ -342,7 +340,7 @@ export default function () {
     const postRef = doc(db, "posts", id);
     await updateDoc(postRef, post);
     const updatedPost = await getDoc(postRef);
-    pushItemToStore(posts.value, updatedPost);
+    pushItemToStore('posts', updatedPost);
   }
 
   async function createUser({ id, email, name, username }) {
@@ -359,7 +357,7 @@ export default function () {
     const userRef = doc(db, "users", id);
     await setDoc(userRef, user);
     const newUser = await getDoc(userRef);
-    pushItemToStore(this.users, newUser);
+    pushItemToStore('users', newUser);
     return makeResourceFromDoc(newUser);
   }
 
@@ -374,7 +372,7 @@ export default function () {
     };
     const userRef = doc(db, "users", user.id);
     await updateDoc(userRef, userUpdates);
-    pushItemToStore(users.value, user);
+    pushItemToStore('users', user);
   }
 
   //------------------------------------------------------------
@@ -408,15 +406,12 @@ export default function () {
   }
   function pushItemToStore(resource, item) {
     const resourceArray = useState(resource).value;
-    //console.log("pushItemToStore", "1");
     const index = resourceArray.findIndex((r) => r.id === item.id);
-    //console.log("pushItemToStore", "2", index);
     if (item.id && index !== -1) {
       resourceArray[index] = item;
     } else {
       resourceArray.push(item);
     }
-    //console.log("pushItemToStore", "3", resourceArray);
   }
   /*
   function pushItemToStore(resource, item) {
@@ -439,7 +434,7 @@ export default function () {
   return {
     user,
     thread,
-    unsubscribeAllSnapshots, // ???
+    unsubscribeAllSnapshots,
     fetchItem,
     fetchItems,
     fetchCategory,

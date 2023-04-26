@@ -48,7 +48,8 @@
             >Зарегистрироваться</NuxtLink
           >
           <NuxtLink to="/user/signin" class="header__link">
-            <font-awesome-icon icon="fa-solid fa-right-to-bracket" /> Войти
+            <span><font-awesome-icon icon="fa-solid fa-right-to-bracket" /></span>
+            <span> Войти</span>
           </NuxtLink>
         </div>
 

@@ -7,7 +7,7 @@
       </div>
       <NuxtLink
         v-if="authUser"
-        :to="`/forum/thread/create/${forum.id}`"
+        :to="`/forum/${forum.id}/thread/create`"
         class="forum__button btn_orange btn_small"
       >
         Начать новую тему
@@ -31,7 +31,7 @@
 const router = useRouter();
 const route = useRoute();
 
-const id = route.params.id;
+const id = route.params.forumId;
 
 const page = ref(parseInt(route.query.page) || 1);
 const threadsPerPage = 10;

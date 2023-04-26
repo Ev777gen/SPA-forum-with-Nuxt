@@ -16,8 +16,12 @@
       </aside>
       <main class="app__content">
         <!-- <TheBreadcrumbs />-->
-        <NuxtPage v-show="isAsyncDataLoaded" />
-        <UiSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />
+        <div v-show="isAsyncDataLoaded" class="app__page">
+          <NuxtPage />
+        </div>
+        <div v-show="!isAsyncDataLoaded" class="app__spinner">
+          <UiSpinner />
+        </div>
         <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
         <!--<AppSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />-->
       </main>

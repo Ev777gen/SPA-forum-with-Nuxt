@@ -27,7 +27,7 @@
         Форум
       </NuxtLink>
       <NuxtLink
-        to="/about"
+        to="/aboutme"
         class="sidebar__link"
         :style="isDarkMode ? { color: '#fff' } : null"
       >

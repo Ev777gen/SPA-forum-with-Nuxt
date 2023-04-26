@@ -7,10 +7,10 @@
       :style="isDarkMode ? { backgroundColor: '#666' } : null"
     >
       <div v-if="getUserById(post.userId)" class="post__user-info">
-        <NuxtLink :to="`/user/profile${post.userId}`" class="post__user-name">
+        <NuxtLink :to="`/user/profile/${post.userId}`" class="post__user-name">
           {{ getUserById(post.userId).name }}
         </NuxtLink>
-        <NuxtLink :to="`/user/profile${post.userId}`" class="post__avatar">
+        <NuxtLink :to="`/user/profile/${post.userId}`" class="post__avatar">
           <UserAvatar
             class="post__avatar avatar_large"
             :src="getUserById(post.userId).avatar"
