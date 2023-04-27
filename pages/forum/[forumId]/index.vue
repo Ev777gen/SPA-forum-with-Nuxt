@@ -101,6 +101,10 @@ async function fetchAsyncData() {
     stopLoadingIndicator();
   }
 }
+
+definePageMeta({
+  middleware: "forum-404",
+});
 </script>
 
 <style lang="scss" scoped>

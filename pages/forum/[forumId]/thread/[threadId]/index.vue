@@ -39,9 +39,7 @@
     <ForumPostEditor v-if="authUser" @save="addPost" />
     <div v-else class="thread__no-auth-user">
       Чтобы написать пост, нужно
-      <NuxtLink :to="`/user/signin?redirectTo=${$route.path}`"
-        >Войти</NuxtLink
-      >
+      <NuxtLink :to="`/user/signin?redirectTo=${$route.path}`">Войти</NuxtLink>
       или
       <NuxtLink :to="`/user/register?redirectTo=${$route.path}`"
         >Зарегистрироваться</NuxtLink
@@ -99,6 +97,10 @@ async function fetchPostsWithUsers(ids) {
   const userIds = posts.map((post) => post.userId).concat(thread.value.userId);
   await fetchUsers({ ids: userIds });
 }
+
+definePageMeta({
+  middleware: "thread-404",
+});
 </script>
 
 <style lang="scss" scoped>
