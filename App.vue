@@ -1,7 +1,7 @@
 <template>
   <div
     class="app"
-    :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : null"
+    :style="isDarkMode ? { backgroundColor: '#4f4f55', color: '#fff' } : null"
   >
     <header class="app__header">
       <TheNavbar />

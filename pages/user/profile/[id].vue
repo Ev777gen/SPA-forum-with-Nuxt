@@ -60,9 +60,6 @@ async function fetchAsyncData() {
 definePageMeta({
   isAuthRequired: true,
 });
-// definePageMeta({
-//   middleware: "auth-required",
-// });
 </script>
 
 <style lang="scss">
@@ -75,10 +72,6 @@ $card-header-height: 320px;
 $card-background-cover-height: $card-header-height * 0.65;
 $card-background-footer-height: $card-header-height -
   $card-background-cover-height - 4px;
-
-/*$color-starting: #c4b7b2;
-$color-middle: #b8a9a3;
-$color-ending: #fff9f9;*/
 
 $color-starting: #a18a82;
 $color-middle: #beaaa0;
