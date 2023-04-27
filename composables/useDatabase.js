@@ -31,8 +31,7 @@ import {
   increment,
   onSnapshot,
 } from "firebase/firestore";
-
-//import chunk from 'lodash/chunk';
+import chunk from "lodash/chunk";
 
 export default function () {
   const { $firestore: db } = useNuxtApp();
@@ -244,7 +243,7 @@ export default function () {
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newThread = await getDoc(threadRef);
-    pushItemToStore('threads', { ...newThread.data(), id: newThread.id });
+    pushItemToStore("threads", { ...newThread.data(), id: newThread.id });
 
     //commit('appendThreadToUser', { parentId: userId, childId: threadRef.id });
     appendChildToParent({ child: "threadsStarted", parent: "users" })(
@@ -279,10 +278,10 @@ export default function () {
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     newThread = await getDoc(threadRef);
     newPost = await getDoc(postRef);
-    pushItemToStore('threads', newThread.data());
-    pushItemToStore('posts', newPost.data());
+    pushItemToStore("threads", newThread.data());
+    pushItemToStore("posts", newPost.data());
     // Возвращаем обновленную thread
-    console.log('updateThread', '8', threads.value, posts.value)
+    console.log("updateThread", "8", threads.value, posts.value);
     return makeResourceFromDoc(newThread);
   }
 
@@ -314,7 +313,7 @@ export default function () {
     await batch.commit();
     // Делаем то же самое в store, чтобы сразу отобразить на странице
     const newPost = await getDoc(postRef);
-    pushItemToStore('posts', { ...newPost.data(), id: newPost.id });
+    pushItemToStore("posts", { ...newPost.data(), id: newPost.id });
     appendChildToParent({ child: "postIds", parent: "threads" })(
       threads.value,
       { childId: newPost.id, parentId: post.threadId }
@@ -340,7 +339,7 @@ export default function () {
     const postRef = doc(db, "posts", id);
     await updateDoc(postRef, post);
     const updatedPost = await getDoc(postRef);
-    pushItemToStore('posts', updatedPost);
+    pushItemToStore("posts", updatedPost);
   }
 
   async function createUser({ id, email, name, username }) {
@@ -357,7 +356,7 @@ export default function () {
     const userRef = doc(db, "users", id);
     await setDoc(userRef, user);
     const newUser = await getDoc(userRef);
-    pushItemToStore('users', newUser);
+    pushItemToStore("users", newUser);
     return makeResourceFromDoc(newUser);
   }
 
@@ -372,7 +371,7 @@ export default function () {
     };
     const userRef = doc(db, "users", user.id);
     await updateDoc(userRef, userUpdates);
-    pushItemToStore('users', user);
+    pushItemToStore("users", user);
   }
 
   //------------------------------------------------------------

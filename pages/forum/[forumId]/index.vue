@@ -18,11 +18,11 @@
       <ForumThreadList :threads="threadsToDisplay" />
     </div>
     <div v-if="totalPagesCount > 1" class="pagination">
-      <!-- <v-pagination
+      <v-pagination
         v-model="page"
         :pages="totalPagesCount"
         active-color="#DCEDFF"
-      /> -->
+      />
     </div>
   </div>
 </template>
@@ -37,7 +37,6 @@ const page = ref(parseInt(route.query.page) || 1);
 const threadsPerPage = 10;
 
 const { authUser } = useAuth();
-//const { forums, threads, thread, isAsyncDataLoaded } = useDatabase();
 const { thread } = useDatabase();
 const forums = useState("forums");
 const threads = useState("threads");
@@ -72,8 +71,14 @@ const totalPagesCount = computed(() => {
   return Math.ceil(threadsCount.value / threadsPerPage);
 });
 
+// Добавляем в URL-адрес query-параметр page
+// Но страница при этом не перезагружается, только меняется URL
 watch(page, async (page) => {
-  router.push({ query: { page } });
+  await navigateTo({ query: { page } });
+});
+// Поэтому отслеживаем изменение в URL и перезагружаем страницу
+watch(route, async () => {
+  router.go(0);
 });
 
 fetchAsyncData();
@@ -82,16 +87,16 @@ async function fetchAsyncData() {
   try {
     startLoadingIndicator();
     const forum = await fetchForum({ id });
-    const threads = await fetchThreads({
+    // const threads = await fetchThreads({
+    //   ids: forum.threadIds,
+    //   page: page.value,
+    //   threadsPerPage,
+    // });
+    const threads = await fetchThreadsByPage({
       ids: forum.threadIds,
       page: page.value,
       threadsPerPage,
     });
-    /*const threads = await fetchThreadsByPage({
-      ids: forum.threadIds,
-      page: page.value,
-      threadsPerPage,
-    });*/
     const users = await fetchUsers({
       ids: threads.map((thread) => thread.userId),
     });
