@@ -27,6 +27,10 @@ async function fetchAsyncData() {
   await fetchForums({ ids: forumIds });
   stopLoadingIndicator();
 }
+
+definePageMeta({
+  breadcrumb: "Категории",
+});
 </script>
 
 <style lang="scss" scoped>

@@ -15,15 +15,13 @@
         <TheSidebar />
       </aside>
       <main class="app__content">
-        <!-- <TheBreadcrumbs />-->
+        <TheBreadcrumbs />
         <div v-show="isAsyncDataLoaded" class="app__page">
           <NuxtPage :key="`${$route.path}${JSON.stringify($route.query)}`" />
         </div>
         <div v-show="!isAsyncDataLoaded" class="app__spinner">
           <UiSpinner />
         </div>
-        <!-- <router-view v-show="isAsyncDataLoaded" :key="`${$route.path}${JSON.stringify($route.query)}`" /> -->
-        <!--<AppSpinner v-show="!isAsyncDataLoaded" class="app__spinner" />-->
       </main>
     </div>
   </div>
@@ -31,7 +29,6 @@
 
 <script setup>
 // import NProgress from 'nprogress';
-import useDarkMode from "@/composables/useDarkMode";
 
 // const router = useRouter();
 

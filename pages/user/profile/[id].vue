@@ -59,6 +59,7 @@ async function fetchAsyncData() {
 
 definePageMeta({
   isAuthRequired: true,
+  breadcrumb: "Профиль",
 });
 </script>
 

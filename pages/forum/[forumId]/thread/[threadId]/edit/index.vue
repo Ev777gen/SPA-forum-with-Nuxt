@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isAsyncDataLoaded" >
+  <div v-if="isAsyncDataLoaded">
     <h1 class="title">
       Редактирование темы <i>{{ thread.title }}</i>
     </h1>
@@ -24,15 +24,15 @@ const router = useRouter();
 
 const formIsDirty = ref(false);
 
-const threads = useState('threads');
-const posts = useState('posts');
-const isAsyncDataLoaded = useState('isAsyncDataLoaded');
-const { 
-  fetchThread, 
-  updateThread, 
-  fetchPost, 
-  startLoadingIndicator, 
-  stopLoadingIndicator 
+const threads = useState("threads");
+const posts = useState("posts");
+const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const {
+  fetchThread,
+  updateThread,
+  fetchPost,
+  startLoadingIndicator,
+  stopLoadingIndicator,
 } = useDatabase();
 
 const thread = computed(() => {
@@ -42,9 +42,9 @@ const thread = computed(() => {
 const text = computed(() => {
   if (thread.value.postIds) {
     const post = findItemById(posts.value, thread.value.postIds[0]);
-    return post ? post.text : '';
+    return post ? post.text : "";
   } else {
-    return '';
+    return "";
   }
 });
 
@@ -57,28 +57,31 @@ async function fetchAsyncData() {
   stopLoadingIndicator();
 }
 
-async function save ({ title, text }) {
+async function save({ title, text }) {
   const thread = await updateThread({
     id: threadId,
     title,
-    text
+    text,
   });
   router.push(`/forum/${forumId}/thread/${threadId}`);
 }
 
-function cancel () {
+function cancel() {
   router.push(`/forum/${forumId}/thread/${threadId}`);
 }
 
 onBeforeRouteLeave(() => {
   if (formIsDirty.value) {
-    const isConfirmed = window.confirm('Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны.');
+    const isConfirmed = window.confirm(
+      "Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны."
+    );
     if (!isConfirmed) return false;
   }
 });
 
 definePageMeta({
   isAuthRequired: true,
+  breadcrumb: "Редактировать тему",
 });
 </script>
 

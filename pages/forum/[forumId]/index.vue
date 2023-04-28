@@ -98,6 +98,7 @@ async function fetchAsyncData() {
 
 definePageMeta({
   middleware: "forum-404",
+  breadcrumb: "Форум",
 });
 </script>
 

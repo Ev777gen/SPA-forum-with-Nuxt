@@ -31,6 +31,10 @@
       />
 
       <div class="form__btn-group">
+        <div>
+          <span>Уже есть аккаунт? </span>
+          <NuxtLink :to="`/user/signin`">Войти</NuxtLink>
+        </div>
         <button type="submit" class="btn_blue">Зарегистрироваться</button>
       </div>
     </VeeForm>
@@ -60,5 +64,13 @@ async function register() {
 
 definePageMeta({
   isForGuests: true,
+  breadcrumb: "Зарегистрироваться",
 });
 </script>
+
+<style lang="scss" scoped>
+.form__btn-group {
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

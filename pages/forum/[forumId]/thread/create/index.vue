@@ -4,7 +4,12 @@
       Создать новую тему в форуме <i>{{ forum.name }}</i>
     </h1>
 
-    <ForumThreadEditor @save="save" @cancel="cancel" @dirty="formIsDirty = true" @clean="formIsDirty = false"/>
+    <ForumThreadEditor
+      @save="save"
+      @cancel="cancel"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
+    />
   </div>
 </template>
 
@@ -16,9 +21,14 @@ const forumId = route.params.forumId;
 
 const formIsDirty = ref(false);
 
-const forums = useState('forums');
-const isAsyncDataLoaded = useState('isAsyncDataLoaded');
-const { fetchForum, createThread, startLoadingIndicator, stopLoadingIndicator } = useDatabase();
+const forums = useState("forums");
+const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const {
+  fetchForum,
+  createThread,
+  startLoadingIndicator,
+  stopLoadingIndicator,
+} = useDatabase();
 
 const forum = computed(() => {
   return findItemById(forums.value, forumId);
@@ -32,11 +42,11 @@ async function fetchAsyncData() {
   stopLoadingIndicator();
 }
 
-async function save ({ title, text }) {
+async function save({ title, text }) {
   const thread = await createThread({
     title,
     text,
-    forumId: forum.value.id
+    forumId: forum.value.id,
   });
   router.push(`/forum/${forumId}/thread/${thread.id}`);
 }
@@ -47,13 +57,16 @@ function cancel() {
 
 onBeforeRouteLeave(() => {
   if (formIsDirty.value) {
-    const isConfirmed = window.confirm('Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны.');
+    const isConfirmed = window.confirm(
+      "Вы уверены, что хотите покунуть страницу? Все несохраненные изменения будут потеряны."
+    );
     if (!isConfirmed) return false;
   }
 });
 
 definePageMeta({
   isAuthRequired: true,
+  breadcrumb: "Создать тему",
 });
 </script>
 

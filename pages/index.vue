@@ -61,24 +61,29 @@
 
 <script setup>
 const { authUser, signInUserWithEmailAndPassword } = useAuth();
-const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useDatabase();
+const { fetchUser, startLoadingIndicator, stopLoadingIndicator } =
+  useDatabase();
 
 const nuxtApp = useNuxtApp();
 
 async function logInWithDefaultUser() {
   try {
-  startLoadingIndicator();
-  const defaultUser = await fetchUser({ id: '8WGcARP4RqQchFNE2wh326iwQ913' });
-  const credentials = await signInUserWithEmailAndPassword({
-    email: defaultUser.email,
-    password: "123456",
-  });
-  stopLoadingIndicator();
+    startLoadingIndicator();
+    const defaultUser = await fetchUser({ id: "8WGcARP4RqQchFNE2wh326iwQ913" });
+    const credentials = await signInUserWithEmailAndPassword({
+      email: defaultUser.email,
+      password: "123456",
+    });
+    stopLoadingIndicator();
   } catch (error) {
-   alert(error.message);
-   stopLoadingIndicator();
+    alert(error.message);
+    stopLoadingIndicator();
   }
 }
+
+definePageMeta({
+  breadcrumb: "Главная",
+});
 </script>
 
 <style lang="scss" scoped>

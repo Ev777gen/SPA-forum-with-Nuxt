@@ -100,6 +100,7 @@ async function fetchPostsWithUsers(ids) {
 
 definePageMeta({
   middleware: "thread-404",
+  breadcrumb: "Тема",
 });
 </script>
 

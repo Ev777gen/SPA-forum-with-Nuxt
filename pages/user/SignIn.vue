@@ -21,7 +21,7 @@
       <div class="form__btn-group">
         <div>
           <span>Еще не зарегистрированы? </span>
-          <router-link :to="`/user/register`">Создайте аккаунт</router-link>
+          <NuxtLink :to="`/user/register`">Создайте аккаунт</NuxtLink>
         </div>
         <button
           type="submit"
@@ -62,6 +62,7 @@ function successRedirect() {
 
 definePageMeta({
   isForGuests: true,
+  breadcrumb: "Войти",
 });
 </script>
 
