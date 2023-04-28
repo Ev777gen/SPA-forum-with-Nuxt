@@ -17,7 +17,7 @@
       <main class="app__content">
         <!-- <TheBreadcrumbs />-->
         <div v-show="isAsyncDataLoaded" class="app__page">
-          <NuxtPage />
+          <NuxtPage :key="`${$route.path}${JSON.stringify($route.query)}`" />
         </div>
         <div v-show="!isAsyncDataLoaded" class="app__spinner">
           <UiSpinner />
@@ -30,12 +30,11 @@
 </template>
 
 <script setup>
-//import NProgress from 'nprogress';
+// import NProgress from 'nprogress';
 import useDarkMode from "@/composables/useDarkMode";
 
-//const router = useRouter();
+// const router = useRouter();
 
-//const { isAsyncDataLoaded } = storeToRefs(useForumStore());
 const { authUser, fetchAuthUser } = useAuth();
 const { isDarkMode } = useDarkMode();
 const isAsyncDataLoaded = useState("isAsyncDataLoaded");
@@ -44,23 +43,23 @@ fetchAsyncData();
 
 async function fetchAsyncData() {
   await fetchAuthUser();
-  /*NProgress.configure({
-    speed: 200,
-    showSpinner: false
-  });
-  router.beforeEach(() => {
-    NProgress.start();
-  });
-  router.afterEach(() => {
-    setTimeout(() => NProgress.done(), 500);
-  });*/
+  // NProgress.configure({
+  //   speed: 200,
+  //   showSpinner: false
+  // });
+  // router.beforeEach(() => {
+  //   NProgress.start();
+  // });
+  // router.afterEach(() => {
+  //   setTimeout(() => NProgress.done(), 500);
+  // });
 }
 </script>
 
 <style lang="scss">
 @import "@/assets/scss/reset.scss";
 @import "@/assets/scss/main.scss";
-/*@import "~nprogress/nprogress.css";*/
+// @import "~nprogress/nprogress.css";
 
 $container-width: 1100px;
 $content-width: 900px;
@@ -113,8 +112,8 @@ $header-height: 75px;
     margin-top: 40vh;
   }
 }
-/*
-#nprogress .bar{
-  background: #5ce0b0 !important;
-}*/
+
+// #nprogress .bar{
+//   background: #5ce0b0 !important;
+// }
 </style>

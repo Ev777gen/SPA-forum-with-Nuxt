@@ -71,14 +71,8 @@ const totalPagesCount = computed(() => {
   return Math.ceil(threadsCount.value / threadsPerPage);
 });
 
-// Добавляем в URL-адрес query-параметр page
-// Но страница при этом не перезагружается, только меняется URL
 watch(page, async (page) => {
   await navigateTo({ query: { page } });
-});
-// Поэтому отслеживаем изменение в URL и перезагружаем страницу
-watch(route, async () => {
-  router.go(0);
 });
 
 fetchAsyncData();
@@ -87,11 +81,6 @@ async function fetchAsyncData() {
   try {
     startLoadingIndicator();
     const forum = await fetchForum({ id });
-    // const threads = await fetchThreads({
-    //   ids: forum.threadIds,
-    //   page: page.value,
-    //   threadsPerPage,
-    // });
     const threads = await fetchThreadsByPage({
       ids: forum.threadIds,
       page: page.value,
