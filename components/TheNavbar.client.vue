@@ -14,23 +14,23 @@
           <span class="slider round"></span>
         </label>
 
-        <a
-          v-if="authUser && !isMobile"
-          @click.prevent="isDropdownOpen = !isDropdownOpen"
-          v-click-outside="onClickOutside"
-          class="header__user-avatar"
-        >
-          <UserAvatar
-            class="header__avatar avatar_small"
-            :src="authUser?.avatar"
-            :alt="`${authUser.name} profile image`"
-          />
-          <font-awesome-icon
-            icon="fa-solid fa-angle-down"
-            class="header__arrow"
-            :class="{ header__arrow_up: isDropdownOpen }"
-          />
-        </a>
+        <div v-if="authUser && !isMobile" class="header__user-avatar">
+          <a
+            @click.prevent="isDropdownOpen = !isDropdownOpen"
+            v-click-outside="onClickOutside"
+          >
+            <UserAvatar
+              class="header__avatar avatar_small"
+              :src="authUser?.avatar"
+              :alt="`${authUser.name} profile image`"
+            />
+            <font-awesome-icon
+              icon="fa-solid fa-angle-down"
+              class="header__arrow"
+              :class="{ header__arrow_up: isDropdownOpen }"
+            />
+          </a>
+        </div>
 
         <div
           v-else-if="authUser && isMobile"
@@ -44,13 +44,15 @@
         </div>
 
         <div v-else class="header__not-auth-user">
-          <NuxtLink to="/user/register" class="header__link"
-            >Зарегистрироваться</NuxtLink
-          >
+          <NuxtLink to="/user/register" class="header__link">
+            Зарегистрироваться
+          </NuxtLink>
           <NuxtLink to="/user/signin" class="header__link">
-            <span
-              ><font-awesome-icon icon="fa-solid fa-right-to-bracket"
-            /></span>
+            <span>
+              <ClientOnly>
+                <font-awesome-icon icon="fa-solid fa-right-to-bracket" />
+              </ClientOnly>
+            </span>
             <span> Войти</span>
           </NuxtLink>
         </div>
@@ -72,9 +74,11 @@
           <NuxtLink to="/user/settings" class="dropdown__link"
             >Настройки</NuxtLink
           >
-          <a href="" class="dropdown__link" @click.prevent="onSignOut"
-            >Выйти <font-awesome-icon icon="fa-solid fa-right-from-bracket"
-          /></a>
+
+          <NuxtLink class="dropdown__link" @click.prevent="onSignOut">
+            Выйти 
+            <font-awesome-icon icon="fa-solid fa-right-from-bracket" />
+          </NuxtLink>
         </div>
       </div>
     </div>

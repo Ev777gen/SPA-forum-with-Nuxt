@@ -17,7 +17,6 @@
 const route = useRoute();
 
 const breadcrumbs = useState("breadcrumbs") || [];
-console.log(breadcrumbs.value);
 const { changeRoute, initialiseBreadcrumbs, updateBreadcrumbs } =
   useBreadcrumbs();
 
