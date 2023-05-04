@@ -79,7 +79,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const router = useRouter();
 
 const isChangingEmail = ref(false);
@@ -102,7 +102,7 @@ const isChanging = computed(() => {
 
 watch(activeUser, (newValue) => {
   if (newValue === null) {
-    router.push("/");
+    navigateTo("/");
   }
 });
 

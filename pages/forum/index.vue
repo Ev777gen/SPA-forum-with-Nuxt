@@ -5,8 +5,8 @@
   </div>
 </template>
 
-<script setup>
-const categories = useState("categories");
+<script setup lang="ts">
+const categories = useState<object[]>("categories");
 const isAsyncDataLoaded = useState("isAsyncDataLoaded");
 
 const {

@@ -27,13 +27,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const router = useRouter();
 const route = useRoute();
 
-const id = route.params.forumId;
+const id: string = route.params.forumId?.toString();
 
-const page = ref(parseInt(route.query.page) || 1);
+const page = ref(parseInt(<string>route.query.page) || 1);
 const threadsPerPage = 10;
 
 const { authUser } = useAuth();
@@ -51,7 +51,7 @@ const {
 } = useDatabase();
 
 const forum = computed(() => {
-  return findItemById(forums.value, id);
+  return findItemById(forums.value, id) || {};
 });
 
 const threadsToDisplay = computed(() => {

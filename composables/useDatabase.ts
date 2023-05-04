@@ -164,12 +164,12 @@ export default function () {
     return fetchItem({ resource: "categories", id });
   }
 
-  function fetchForum({ id }) {
-    return fetchItem({ resource: "forums", id });
+  function fetchForum({ id, once }) {
+    return fetchItem({ resource: "forums", id, once });
   }
 
-  function fetchThread({ id }) {
-    return fetchItem({ resource: "threads", id });
+  function fetchThread({ id, once }) {
+    return fetchItem({ resource: "threads", id, once });
   }
 
   function fetchPost({ id }) {

@@ -1,4 +1,8 @@
-export const localeDate = (timestamp) => {
+interface keyable {
+  [key: string]: any  
+}
+
+export const localeDate = (timestamp: any) => {
   // Конвертируем временную метку в строку:
   // toLocaleString() - дата + время
   // toLocaleDateString() - дата 
@@ -15,12 +19,12 @@ export const localeDate = (timestamp) => {
   return (new Date(timestamp)).toLocaleDateString();
 }
 
-export const findItemById = (resources, id) => {
+export const findItemById = (resources: keyable[], id: string) => {
   if (!resources) return null
   return resources.find(r => r.id === id)
 }
 
-export const forumThreadsCountWording = (threadsCount) => {
+export const forumThreadsCountWording = (threadsCount: number) => {
   if (threadsCount) {
     if (threadsCount === 1) {
       return ' тема';
@@ -33,7 +37,7 @@ export const forumThreadsCountWording = (threadsCount) => {
   return 'нет тем';
 }
 
-export const repliesCountWording = (repliesCount) => {
+export const repliesCountWording = (repliesCount: number) => {
   if (repliesCount) {
     if (repliesCount === 1) {
       return ' ответ';
@@ -46,7 +50,7 @@ export const repliesCountWording = (repliesCount) => {
   return 'нет ответов';
 }
 
-export const userPostsCountWording = (postsCount) => {
+export const userPostsCountWording = (postsCount: number) => {
   if (postsCount) {
     if (postsCount === 1) {
       return ' пост';
@@ -59,7 +63,7 @@ export const userPostsCountWording = (postsCount) => {
   return 'нет постов';
 }
 
-export const userThreadsCountWording = (threadsCount) => {
+export const userThreadsCountWording = (threadsCount: number) => {
   if (threadsCount) {
     if (threadsCount === 1) {
       return ' начатая тема';

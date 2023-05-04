@@ -1,7 +1,7 @@
 <template>
   <div
     class="app"
-    :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : null"
+    :style="isDarkMode ? { backgroundColor: '#5f5f65', color: '#fff' } : undefined"
   >
     <header class="app__header">
       <TheNavbar />
@@ -10,7 +10,7 @@
     <div class="app__body container">
       <aside
         class="app__sidebar desktop-only"
-        :style="isDarkMode ? { backgroundColor: '#555' } : null"
+        :style="isDarkMode ? { backgroundColor: '#555' } : undefined"
       >
         <TheSidebar />
       </aside>
@@ -25,8 +25,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 defineProps(["error"]);
+const { isDarkMode } = useDarkMode();
 </script>
 
 <style lang="scss" scoped>

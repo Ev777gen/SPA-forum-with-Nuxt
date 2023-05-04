@@ -48,13 +48,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute();
 const id = route.params.threadId;
 
 const { authUser } = useAuth();
 const posts = useState("posts");
-const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const { thread: threadGetter } = useDatabase();
 const {
   fetchThread,
@@ -82,7 +82,7 @@ async function fetchAsyncData() {
   stopLoadingIndicator();
 }
 
-function addPost(eventData) {
+function addPost(eventData: any) {
   const post = {
     ...eventData.post,
     threadId: id,
@@ -90,7 +90,7 @@ function addPost(eventData) {
   createPost(post);
 }
 
-async function fetchPostsWithUsers(ids) {
+async function fetchPostsWithUsers(ids = []) {
   // Загружаем из базы данных посты
   const posts = await fetchPosts({ ids });
   // Загружаем id пользователей, написавших эти посты

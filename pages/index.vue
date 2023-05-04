@@ -59,7 +59,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const { authUser, signInUserWithEmailAndPassword } = useAuth();
 const { fetchUser, startLoadingIndicator, stopLoadingIndicator } =
   useDatabase();

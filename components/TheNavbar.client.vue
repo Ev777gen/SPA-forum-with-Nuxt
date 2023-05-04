@@ -85,7 +85,7 @@
   </header>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import clickOutside from "click-outside-vue3";
 import useDarkMode from "@/composables/useDarkMode";
 

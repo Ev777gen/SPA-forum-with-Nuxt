@@ -3,6 +3,10 @@ import { required, email, min, url } from "@vee-validate/rules";
 import { localize } from "@vee-validate/i18n";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
+interface keyable {
+  [key: string]: any  
+}
+
 export default defineNuxtPlugin((nuxtApp) => {
   const { $firestore: db } = useNuxtApp();
   // Задаем правила валидации.
@@ -15,7 +19,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // И пишем свое правило для полей username и email
   // на странице регистрации нового пользователя,
   // чтобы убедиться, что они еще не зарегистрированы
-  defineRule("unique", async (value, args) => {
+  defineRule("unique", async (value: string, args: any[] | keyable) => {
     // На элементе AppFormField можно записать правила двумя способами:
     // - строкой: <AppFormField ... rules="...|unique:users,username" />
     // - объектом: <AppFormField ... rules="{..., unique: {coll: 'users', field: 'username'}}" />

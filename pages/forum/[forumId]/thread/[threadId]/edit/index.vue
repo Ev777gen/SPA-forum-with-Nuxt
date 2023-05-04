@@ -1,11 +1,11 @@
 <template>
   <div v-if="isAsyncDataLoaded">
     <h1 class="title">
-      Редактирование темы <i>{{ thread.title }}</i>
+      Редактирование темы <i>{{ thread?.title }}</i>
     </h1>
 
     <ForumThreadEditor
-      :title="thread.title"
+      :title="thread?.title"
       :text="text"
       @save="save"
       @cancel="cancel"
@@ -15,10 +15,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
 const route = useRoute();
-const forumId = route.params.forumId;
-const threadId = route.params.threadId;
+const forumId: string = route.params.forumId?.toString();
+const threadId: string = route.params.threadId?.toString();
 
 const router = useRouter();
 
@@ -40,7 +41,7 @@ const thread = computed(() => {
 });
 
 const text = computed(() => {
-  if (thread.value.postIds) {
+  if (thread.value?.postIds) {
     const post = findItemById(posts.value, thread.value.postIds[0]);
     return post ? post.text : "";
   } else {
@@ -57,17 +58,17 @@ async function fetchAsyncData() {
   stopLoadingIndicator();
 }
 
-async function save({ title, text }) {
+async function save({ title = "", text = "" }) {
   const thread = await updateThread({
     id: threadId,
     title,
     text,
   });
-  router.push(`/forum/${forumId}/thread/${threadId}`);
+  navigateTo(`/forum/${forumId}/thread/${threadId}`);
 }
 
 function cancel() {
-  router.push(`/forum/${forumId}/thread/${threadId}`);
+  navigateTo(`/forum/${forumId}/thread/${threadId}`);
 }
 
 onBeforeRouteLeave(() => {

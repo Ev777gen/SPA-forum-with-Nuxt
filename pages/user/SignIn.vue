@@ -35,7 +35,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const form = reactive({
   email: "",
   password: "",
@@ -56,8 +56,8 @@ async function signIn() {
 }
 
 function successRedirect() {
-  const redirectTo = route.query.redirectTo || "/";
-  router.push(redirectTo);
+  const redirectTo: string = route.query.redirectTo?.toString() || "/";
+  navigateTo(redirectTo);
 }
 
 definePageMeta({

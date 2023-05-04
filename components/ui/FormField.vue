@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const props = defineProps({
   name: { type: String, required: true },
   label: { type: String, default: '' },
@@ -22,7 +22,7 @@ const props = defineProps({
 });
 </script>
 
-<script>
+<script lang="ts">
 export default {
   inheritAttrs: false,
 }

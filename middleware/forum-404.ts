@@ -4,9 +4,11 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const forums = useState("forums");
   const { fetchForum } = useDatabase();
 
-  await fetchForum({ id: to.params.forumId, once: true });
+  const forumId: string = to.params.forumId?.toString();
+
+  await fetchForum({ id: forumId, once: true });
   // Проверяем, есть ли такая тема
-  const forumExists = findItemById(forums.value, to.params.forumId);
+  const forumExists = findItemById(forums.value, forumId);
 
   if (!forumExists) {
     return navigateTo("/error");

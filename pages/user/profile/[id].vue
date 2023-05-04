@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const router = useRouter();
 const route = useRoute();
 
@@ -43,7 +43,7 @@ const userToDisplay = computed(() => {
 
 watch(userToDisplay, (newValue) => {
   if (newValue === null) {
-    router.push("/");
+    navigateTo("/");
   }
 });
 

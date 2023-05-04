@@ -13,11 +13,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
 const router = useRouter();
 const route = useRoute();
 
-const forumId = route.params.forumId;
+const forumId: string = route.params.forumId?.toString();
 
 const formIsDirty = ref(false);
 
@@ -31,7 +32,7 @@ const {
 } = useDatabase();
 
 const forum = computed(() => {
-  return findItemById(forums.value, forumId);
+  return findItemById(forums.value, forumId) || {};
 });
 
 fetchAsyncData();
@@ -42,17 +43,17 @@ async function fetchAsyncData() {
   stopLoadingIndicator();
 }
 
-async function save({ title, text }) {
+async function save({ title = "", text ="" }) {
   const thread = await createThread({
-    title,
-    text,
-    forumId: forum.value.id,
-  });
-  router.push(`/forum/${forumId}/thread/${thread.id}`);
+      title,
+      text,
+      forumId: forum.value.id,
+    });
+  navigateTo(`/forum/${forumId}/thread/${thread?.id}`);
 }
 
 function cancel() {
-  router.push(`/forum/${forumId}`);
+  navigateTo(`/forum/${forumId}`);
 }
 
 onBeforeRouteLeave(() => {
