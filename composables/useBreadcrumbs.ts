@@ -1,11 +1,28 @@
-export default function useBreadcrumbs() {
-  const breadcrumbs = useState("breadcrumbs", () => [
+import { RouteParamsRaw, LocationQueryRaw } from 'vue-router';
+
+interface IBreadcrumb {
+  name: string,
+  params?: RouteParamsRaw,
+  query?: LocationQueryRaw,
+  nameToDisplay: string | undefined,
+}
+
+interface IRoute {
+  path: string,
+  name: string,
+  params?: RouteParamsRaw,
+  query?: LocationQueryRaw,
+  meta?: { breadcrumb: string },
+}
+
+export default function useBreadcrumbs(): object {
+  const breadcrumbs = useState<IBreadcrumb[]>("breadcrumbs", () => [
     { name: "index", nameToDisplay: "Главная" },
   ]);
 
-  function updateBreadcrumbs(route) {
+  function updateBreadcrumbs(route: IRoute): void {
     if (!route) return;
-    if (route.meta.breadcrumb) {
+    if (route.meta?.breadcrumb) {
       const lastIndex = breadcrumbs.value.length - 1;
       const currentIndex = breadcrumbs.value.findIndex(
         (breadcrumb) => breadcrumb.name === route.name
@@ -27,7 +44,7 @@ export default function useBreadcrumbs() {
     }
   }
 
-  function changeRoute(breadcrumb) {
+  function changeRoute(breadcrumb: IBreadcrumb) {
     return navigateTo({
       name: breadcrumb.name,
       params: breadcrumb.params,
@@ -35,28 +52,28 @@ export default function useBreadcrumbs() {
     });
   }
 
-  function addBreadcrumb(route) {
+  function addBreadcrumb(route: IRoute): void {
     if (route) {
-      const currentRoute = {
+      const currentRoute: IBreadcrumb = {
         name: route.name,
-        params: route.params || null,
-        query: route.query || null,
-        nameToDisplay: route.meta.breadcrumb,
+        params: route.params,
+        query: route.query,
+        nameToDisplay: route.meta?.breadcrumb,
       };
       breadcrumbs.value.push(currentRoute);
     }
   }
 
-  function deleteNextBreadcrumbs(idx) {
+  function deleteNextBreadcrumbs(idx: number): void {
     breadcrumbs.value.splice(idx + 1);
   }
 
-  function replaceLastBreadcrumbWith(route) {
+  function replaceLastBreadcrumbWith(route: IRoute): void {
     breadcrumbs.value.pop();
     addBreadcrumb(route);
   }
 
-  function initialiseBreadcrumbs() {
+  function initialiseBreadcrumbs(): void {
     if (breadcrumbs.value.length > 0) {
       deleteNextBreadcrumbs(0);
     } else {
