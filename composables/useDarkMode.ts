@@ -1,8 +1,6 @@
-// Пока без сохранения в LocalStorage
+const isDarkMode = ref<boolean>(false);
 
-const isDarkMode = ref(false);
-
-const toggleDarkMode = () => {
+const toggleDarkMode = (): void => {
   isDarkMode.value = !isDarkMode.value;
 };
 
@@ -22,18 +20,20 @@ if (
   document.body.classList.add("dark-mode");
 }
 
-function convertStringToBoolean(str) {
-  if (str === "true") {
-    return true;
-  } else if (str === "false") {
-    return false;
-  }
-  return;
-}
+// function convertStringToBoolean(str: string): boolean | undefined {
+//   if (str === "true") {
+//     return true;
+//   } else if (str === "false") {
+//     return false;
+//   }
+//   return;
+// }
 
-export default function useDarkMode() {
+export default function useDarkMode(): object {
   return { isDarkMode, toggleDarkMode };
 }
+
+/////////////////////////////////////////////////
 
 /*let isDarkMode, toggleDarkMode;
 
