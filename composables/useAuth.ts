@@ -50,8 +50,8 @@ export default function () {
 
 
   let authId = useState<string | null>("authId", () => null);
-  const authUserUnsubscribe = ref([]);
-  const authObserverUnsubscribe = ref([]);
+  let authUserUnsubscribe: Function | null = null;
+  let authObserverUnsubscribe: Function | null = null;
 
   const authUser = computed(() => {
     const { user } = useDatabase();
@@ -88,14 +88,14 @@ export default function () {
       resource: "users",
       id: userId,
       handleUnsubscribe: (unsubscribe: Function): void => {
-        authUserUnsubscribe.value = unsubscribe;
+        authUserUnsubscribe = unsubscribe;
       },
     });
     authId.value = userId;
   }
 
   function initAuthentication() {
-    if (authObserverUnsubscribe.value) authObserverUnsubscribe.value();
+    if (authObserverUnsubscribe) authObserverUnsubscribe();
     if (auth) {
       return new Promise((resolve) => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -107,7 +107,7 @@ export default function () {
             resolve(null);
           }
         });
-        authObserverUnsubscribe.value = unsubscribe;
+        authObserverUnsubscribe = unsubscribe;
       });
     } else {
       return;
@@ -161,9 +161,9 @@ export default function () {
 
   // Отписываемся от слушателей
   async function unsubscribeAuthUserSnapshot(): Promise<void> {
-    if (authUserUnsubscribe.value) {
-      authUserUnsubscribe.value();
-      authUserUnsubscribe.value = null;
+    if (authUserUnsubscribe) {
+      authUserUnsubscribe();
+      authUserUnsubscribe = null;
     }
   }
 
