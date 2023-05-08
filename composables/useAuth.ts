@@ -8,7 +8,7 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 import { Auth, UserCredential } from "firebase/auth";
-import { FirebaseStorage, StorageReference } from "firebase/storage";
+import { FirebaseStorage } from "firebase/storage";
 
 interface ISignInData {
   email: string,
@@ -50,8 +50,8 @@ export default function () {
 
 
   let authId = useState<string | null>("authId", () => null);
-  const authUserUnsubscribe = ref(null);
-  const authObserverUnsubscribe = ref(null);
+  const authUserUnsubscribe = ref([]);
+  const authObserverUnsubscribe = ref([]);
 
   const authUser = computed(() => {
     const { user } = useDatabase();
