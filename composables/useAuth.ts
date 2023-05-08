@@ -7,20 +7,57 @@ import {
   EmailAuthProvider,
   reauthenticateWithCredential,
 } from "firebase/auth";
+import { Auth, UserCredential } from "firebase/auth";
+import { FirebaseStorage, StorageReference } from "firebase/storage";
+
+interface ISignInData {
+  email: string,
+  password: string,
+}
+
+interface IUserToRegister extends ISignInData {
+  name: string,
+  username: string,
+}
+
+interface IUser {
+  email: string,
+  name: string,
+  username: string,
+  id: string,
+  avatar: string,
+  usernameLower: string,
+  bio: string,
+  registeredAt: number | object,
+  lastVisitAt: number | object,
+  postsCount: number,
+  threadsStarted: string[],
+  website?: string,
+}
+
+type FileType = (Blob | Uint8Array | ArrayBuffer) & {
+  name: string,
+}
 
 export default function () {
-  const { $auth: auth, $storage: storage } = useNuxtApp();
+  // const { $auth: auth, $storage: storage } = useNuxtApp();
 
-  let authId = useState("authId", () => null);
-  const authUserUnsubscribe = ref([]);
-  const authObserverUnsubscribe = ref([]);
+  let auth: Auth;
+  let storage: FirebaseStorage;
+  const { $auth, $storage } = useNuxtApp();
+  auth = $auth as Auth;
+  storage = $storage as FirebaseStorage;
 
-  //const authUser = useState("authUser", () => "hello authUser");
+
+  let authId = useState<string | null>("authId", () => null);
+  const authUserUnsubscribe = ref(null);
+  const authObserverUnsubscribe = ref(null);
 
   const authUser = computed(() => {
-    const { user } = useDatabase(); // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    //console.log('inside authUser, user(authId.value)', user.value(authId.value))
-    return user.value(authId.value);
+    const { user } = useDatabase();
+    if (authId.value) {
+      return user.value(authId.value);
+    }
   });
 
   async function registerUserWithEmailAndPassword({
@@ -28,49 +65,33 @@ export default function () {
     username,
     email,
     password,
-  }) {
+  }: IUserToRegister): Promise<void> {
     const { createUser } = useDatabase();
     const result = await createUserWithEmailAndPassword(auth, email, password);
     await createUser({ id: result.user.uid, name, username, email });
   }
 
-  function signInUserWithEmailAndPassword({ email, password }) {
+  function signInUserWithEmailAndPassword({ email, password }: ISignInData): Promise<UserCredential> {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  async function signOutUser() {
+  async function signOutUser(): Promise<void> {
     await auth.signOut();
     authId.value = null;
-    //authUser.value = null; // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    //console.log("signOut auth.currentUser", auth.currentUser);
-    //console.log("signOut authId", authId.value);
   }
 
-  async function fetchAuthUser() {
-    //console.log("fetchAuthUser", "1");
+  async function fetchAuthUser(): Promise<void> {
     const { fetchItem } = useDatabase();
-    //console.log("fetchAuthUser", "2");
-    //console.log("auth", auth);
     const userId = auth.currentUser?.uid;
-    //console.log("fetchAuthUser", "3");
     if (!userId) return;
-    //console.log("fetchAuthUser", "4");
-    //console.log(useState('users').value)
     const fetchedAuthUser = await fetchItem({
       resource: "users",
       id: userId,
-      handleUnsubscribe: (unsubscribe) => {
+      handleUnsubscribe: (unsubscribe: Function): void => {
         authUserUnsubscribe.value = unsubscribe;
       },
     });
     authId.value = userId;
-    //authUser.value = fetchedAuthUser; // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    //console.log("fetchAuthUser", "5", "userId", userId);
-    //console.log("fetchAuthUser", "6", "fetchedAuthUser", fetchedAuthUser);
-    //console.log("fetchAuthUser", "7", "authUser.value", authUser.value);
-
-    //console.log('useAuth fetchAuthUser uid', auth.currentUser?.uid)
-    //console.log('useAuth fetchAuthUser authId.value', authId.value)
   }
 
   function initAuthentication() {
@@ -93,44 +114,53 @@ export default function () {
     }
   }
 
-  async function uploadAvatar({ file, filename }) {
+  async function uploadAvatar({ file, filename }: { file: FileType, filename: string }): Promise<string | null | undefined> {
     if (!file) return null;
-    const authId = authId.value;
     filename = filename || file.name;
     try {
       const storageRef = ref(
         storage,
-        `uploads/${authId}/images/${Date.now()}-${filename}`
+        `uploads/${authId.value}/images/${Date.now()}-${filename}`
       );
       return uploadBytes(storageRef, file).then(() => {
         return getDownloadURL(storageRef);
       });
     } catch (error) {
-      alert(error.message);
+      if (error instanceof Error) {
+        alert(error.message);
+      }
     }
   }
 
   // Методы для смены e-mail
-  async function updateEmail({ email }) {
-    return updateEmail(auth.currentUser, email);
+  async function updateUserEmail({ email }: { email: string }): Promise<void> {
+    if (auth.currentUser) {
+      return updateEmail(auth.currentUser, email);
+    }
   }
 
-  async function updatePassword({ password }) {
-    return updatePassword(auth.currentUser, password);
+  async function updateUserPassword({ password }: { password: string }): Promise<void> {
+    if (auth.currentUser) {
+      return updatePassword(auth.currentUser, password);
+    }
   }
 
-  async function reauthenticate({ email, password }) {
+  async function reauthenticate({ email, password }: { email: string, password: string }): Promise<void> {
     try {
       const credential = EmailAuthProvider.credential(email, password);
       const user = auth.currentUser;
-      await reauthenticateWithCredential(user, credential);
+      if (user) {
+        await reauthenticateWithCredential(user, credential);
+      } else {
+        throw new Error('Сначала необходимо авторизоваться.')
+      }
     } catch (error) {
       console.log({ error });
     }
   }
 
   // Отписываемся от слушателей
-  async function unsubscribeAuthUserSnapshot() {
+  async function unsubscribeAuthUserSnapshot(): Promise<void> {
     if (authUserUnsubscribe.value) {
       authUserUnsubscribe.value();
       authUserUnsubscribe.value = null;
@@ -145,8 +175,8 @@ export default function () {
     fetchAuthUser,
     initAuthentication,
     uploadAvatar,
-    updateEmail,
-    updatePassword,
+    updateUserEmail,
+    updateUserPassword,
     reauthenticate,
     unsubscribeAuthUserSnapshot,
   };
