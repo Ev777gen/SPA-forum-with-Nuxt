@@ -60,13 +60,13 @@
         <div
           class="dropdown"
           :class="{ dropdown_open: isDropdownOpen }"
-          :style="isDarkMode ? { backgroundColor: '#eee' } : null"
+          :style="isDarkMode ? { backgroundColor: '#eee' } : undefined"
         >
           <nav class="dropdown__nav mobile-only">
             <NuxtLink to="/" class="dropdown__link">На главную</NuxtLink>
             <NuxtLink to="/forum" class="dropdown__link">Форум</NuxtLink>
             <NuxtLink to="/aboutme" class="dropdown__link">Обо мне</NuxtLink>
-            <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : null" />
+            <hr :style="isDarkMode ? { backgroundColor: '#ddd' } : undefined" />
           </nav>
           <NuxtLink :to="`/user/profile/${authUser?.id}`" class="dropdown__link"
             >Мой профиль</NuxtLink
@@ -255,6 +255,7 @@ $triangle-size: 8px;
     font-size: 20px;
     line-height: 2;
     color: $dropdown-link-color;
+    cursor: pointer;
     &:hover {
       color: $dropdown-link-color;
     }

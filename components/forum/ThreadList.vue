@@ -7,7 +7,7 @@
       :style="
         isDarkMode
           ? { backgroundColor: index % 2 === 0 ? '#666' : '#555' }
-          : null
+          : undefined
       "
       class="list__item thread"
     >
@@ -28,8 +28,11 @@
       </div>
       <div class="thread__activity">
         <div class="thread__replies-count">
-          {{ thread.repliesCount > 0 ? thread.repliesCount : "" }}
-          {{ repliesCountWording(thread.repliesCount) }}
+          <div v-if="thread.repliesCount">
+            {{ thread.repliesCount > 0 ? thread.repliesCount : "" }}
+            {{ repliesCountWording(thread.repliesCount) }}
+          </div>
+          <div v-else>нет ответов</div>
         </div>
         <UserAvatar
           class="thread__avatar avatar_small"
@@ -51,18 +54,20 @@
 </template>
 
 <script setup lang="ts">
+import { IThread, IUser } from '~/composables/useDatabase';
+
 defineProps({
   threads: {
-    type: Array,
+    type: Array<IThread>,
     required: true,
   },
 });
 
 const { isDarkMode } = useDarkMode();
 
-const users = useState("users");
+const users = useState<IUser[]>("users");
 
-function userById(userId) {
+function userById(userId: string) {
   return findItemById(users.value, userId) || {};
 }
 </script>

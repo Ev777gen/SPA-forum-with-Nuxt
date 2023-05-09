@@ -4,24 +4,24 @@
       class="post"
       v-for="post in posts"
       :key="post.id"
-      :style="isDarkMode ? { backgroundColor: '#666' } : null"
+      :style="isDarkMode ? { backgroundColor: '#666' } : undefined"
     >
       <div v-if="getUserById(post.userId)" class="post__user-info">
         <NuxtLink :to="`/user/profile/${post.userId}`" class="post__user-name">
-          {{ getUserById(post.userId).name }}
+          {{ getUserById(post.userId)?.name }}
         </NuxtLink>
         <NuxtLink :to="`/user/profile/${post.userId}`" class="post__avatar">
           <UserAvatar
             class="post__avatar avatar_large"
-            :src="getUserById(post.userId).avatar"
+            :src="getUserById(post.userId)?.avatar"
           />
         </NuxtLink>
         <p class="desktop-only text_gray">
-          {{ getUserById(post.userId).postsCount }}
+          {{ getUserById(post.userId)?.postsCount }}
           {{ userPostsCountWording(getUserById(post.userId).postsCount) }}
         </p>
         <p class="desktop-only text_gray">
-          {{ getUserById(post.userId).threadsCount }}
+          {{ getUserById(post.userId)?.threadsCount }}
           {{ userThreadsCountWording(getUserById(post.userId).threadsCount) }}
         </p>
       </div>
@@ -58,34 +58,45 @@
 </template>
 
 <script setup lang="ts">
+import { IPost, IUser } from '~/composables/useDatabase';
+
+interface IUpdatePost extends InputEvent {
+  post: IPost,
+}
+
 defineProps({
   posts: {
-    type: Array,
+    type: Array<IPost>,
     required: true,
   },
 });
 
 const { isDarkMode } = useDarkMode();
 
-const editing = ref(null);
+const editing: Ref<string | null> = ref(null);
 
-const authId = useState("authId");
+const authId = useState<string>("authId");
 const { user, updatePost } = useDatabase();
 
-function getUserById(userId) {
-  return user.value(userId);
+function getUserById(userId: string): IUser | undefined {
+  const currentUser = user.value(userId);
+  if (currentUser) {
+    return currentUser;
+  } else {
+    return;
+  }
 }
 
-function toggleEditMode(id) {
+function toggleEditMode(id: string): void {
   editing.value = id === editing.value ? null : id;
 }
 
-function handleUpdate(event) {
+function handleUpdate(event: IUpdatePost): void {
   updatePost(event.post);
   editing.value = null;
 }
 
-function hidePostEditor() {
+function hidePostEditor(): void {
   editing.value = null;
 }
 </script>

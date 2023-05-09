@@ -29,7 +29,7 @@
         </div>
         <div
           class="card__background_footer"
-          :style="isDarkMode ? { backgroundColor: '#4f4f55' } : null"
+          :style="isDarkMode ? { backgroundColor: '#4f4f55' } : undefined"
         >
           <UiFormField
             name="name"
@@ -79,51 +79,61 @@
 </template>
 
 <script setup lang="ts">
-import useDarkMode from "@/composables/useDarkMode";
+import { IUser } from "~/composables/useDatabase";
 
-const props = defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-});
+interface Props {
+  user: IUser,
+}
+
+const props = defineProps<Props>();
+
+// const props = defineProps({
+//   user: {
+//     type: Object,
+//     required: true,
+//   },
+// });
 
 const emit = defineEmits(["cancel", "save"]);
 
-const router = useRouter();
-
 const activeUser = reactive({ ...props.user });
-const avatar = ref(null);
-const avatarPreview = ref(null);
+const avatar: Ref<Blob | null> = ref(null);
+const avatarPreview: Ref<string | ArrayBuffer | null> = ref(null);
 
 const { isDarkMode } = useDarkMode();
 
 const { uploadAvatar } = useAuth();
 const { updateUser } = useDatabase();
 
-function changeAvatar(e) {
-  avatar.value = e.target.files[0];
+function changeAvatar(e: Event) {
+  if (e.target) {
+    avatar.value = e.target.files[0];
+  }
   const reader = new FileReader();
   reader.onload = (event) => {
-    avatarPreview.value = event.target.result;
+    if (event.target?.result) {
+      avatarPreview.value = event.target.result;
+    }
   };
-  reader.readAsDataURL(avatar.value);
+  if (avatar.value) {
+    reader.readAsDataURL(avatar.value);
+  }
 }
 
 function deleteAvatar() {
   activeUser.avatar = "";
 }
 
-async function save() {
+async function save(): Promise<void> {
   const isAvatarChanged = avatar.value !== null || activeUser.avatar === "";
   if (isAvatarChanged) {
     // Загружаем аватар в Firebase Storage и получаем его URL
-    const uploadedImageURL = await uploadAvatar({ file: avatar.value });
+    const uploadedImageURL = await uploadAvatar({ file: avatar.value as Blob });
     activeUser.avatar = uploadedImageURL || activeUser.avatar;
   }
   // Надо клонировать объект, прежде чем посылать его в store
   // Если этого не сделать, получается мы создаем реактивную привязку данных
-  updateUser({ ...activeUser });
+  updateUser({ ...activeUser } as IUser);
   // Выходим из редактирования и возвращаемся к отображению информации
   emit("save");
 }

@@ -6,16 +6,18 @@
 </template>
 
 <script setup lang="ts">
+import { ICategory, IForum } from '~/composables/useDatabase';
+
 const props = defineProps({
   categories: {
-    type: Array,
+    type: Array<ICategory>,
     required: true,
   },
 });
 
-const forums = useState("forums").value;
+const forums = useState<IForum[]>("forums").value;
 
-function getForumsForCategory(category) {
+function getForumsForCategory(category: ICategory) {
   return forums.filter((forum) => forum.categoryId === category.id);
 }
 </script>

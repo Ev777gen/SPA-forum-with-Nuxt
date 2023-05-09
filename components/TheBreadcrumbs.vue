@@ -14,9 +14,11 @@
 </template>
 
 <script setup lang="ts">
+import { IBreadcrumb } from "composables/useBreadcrumbs";
+
 const route = useRoute();
 
-const breadcrumbs = useState("breadcrumbs") || [];
+const breadcrumbs = useState<IBreadcrumb[]>("breadcrumbs") || [];
 const { changeRoute, initialiseBreadcrumbs, updateBreadcrumbs } =
   useBreadcrumbs();
 
@@ -27,7 +29,7 @@ const isJustOneBreadcrumb = computed(() => {
   return breadcrumbs.value.length === 1;
 });
 
-watch(route, (newRoute) => {
+watch(route, (newRoute): void => {
   updateBreadcrumbs(newRoute);
 });
 

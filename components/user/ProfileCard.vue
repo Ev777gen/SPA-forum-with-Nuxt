@@ -4,7 +4,7 @@
       <div class="card__background_cover"></div>
       <div
         class="card__background_footer"
-        :style="isDarkMode ? { backgroundColor: '#4f4f55' } : null"
+        :style="isDarkMode ? { backgroundColor: '#4f4f55' } : undefined"
       >
         <p class="card__name">{{ user.name }}</p>
         <p class="card__date text_gray desktop-only">
@@ -52,12 +52,20 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  user: {
-    type: Object,
-    required: true,
-  },
-});
+import { IUser } from '~/composables/useDatabase';
+
+interface Props {
+  user: IUser,
+}
+
+const props = defineProps<Props>();
+
+// defineProps({
+//   user: {
+//     type: Object,
+//     required: true,
+//   },
+// });
 
 const emit = defineEmits(["edit"]);
 

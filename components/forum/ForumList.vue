@@ -6,7 +6,7 @@
       :style="
         isDarkMode
           ? { backgroundColor: index % 2 === 0 ? '#666' : '#555' }
-          : null
+          : undefined
       "
       class="list__item forum"
     >
@@ -26,9 +26,11 @@
 </template>
 
 <script setup lang="ts">
+import { IForum } from '~/composables/useDatabase';
+
 defineProps({
   forums: {
-    type: Array,
+    type: Array<IForum>,
     required: true,
   },
 });

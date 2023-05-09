@@ -2,7 +2,7 @@
   <div class="sidebar">
     <nav
       class="sidebar__nav"
-      :style="isDarkMode ? { backgroundColor: '#777' } : null"
+      :style="isDarkMode ? { backgroundColor: '#777' } : undefined"
     >
       <NuxtLink
         to="/"
@@ -38,7 +38,6 @@
 </template>
 
 <script setup lang="ts">
-import useDarkMode from "@/composables/useDarkMode";
 const { isDarkMode } = useDarkMode();
 </script>
 
