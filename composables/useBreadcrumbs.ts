@@ -1,13 +1,13 @@
-import { RouteParamsRaw, LocationQueryRaw } from 'vue-router';
+import { RouteParamsRaw, LocationQueryRaw, RouteLocationNormalizedLoaded } from 'vue-router';
 
-interface IBreadcrumb {
+export interface IBreadcrumb {
   name: string,
   params?: RouteParamsRaw,
   query?: LocationQueryRaw,
   nameToDisplay: string | undefined,
 }
 
-interface IRoute {
+export interface IRoute {
   path: string,
   name: string,
   params?: RouteParamsRaw,
@@ -15,7 +15,9 @@ interface IRoute {
   meta?: { breadcrumb: string },
 }
 
-export default function useBreadcrumbs(): object {
+//RouteLocationNormalizedLoaded
+
+export default function useBreadcrumbs() {
   const breadcrumbs = useState<IBreadcrumb[]>("breadcrumbs", () => [
     { name: "index", nameToDisplay: "Главная" },
   ]);

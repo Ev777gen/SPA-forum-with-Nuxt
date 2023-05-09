@@ -12,15 +12,20 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import chunk from "lodash/chunk";
+// Импортируем типы
+import { Firestore } from '@firebase/firestore';
+import { DocumentData, FieldValue } from 'firebase/firestore';
+import { Unsubscribe } from "firebase/auth";
+import { ITimestamp } from "utils";
 
-interface ICategory {
+export interface ICategory {
   name: string,
   slug: string,
   id: string,
   forumIds: string[],
 }
 
-interface IForum {
+export interface IForum {
   name: string,
   slug: string,
   description: string,
@@ -30,38 +35,57 @@ interface IForum {
   lastPostId: string,
 }
 
-interface IThread {
+export interface IThread {
   title: string,
   slug: string,
   id: string,
   forumId: string,
   userId: string,
   firstPostId: string,
-  publishedAt: number | object,
-  lastPostAt: number | object,
+  publishedAt: number | ITimestamp,
+  lastPostAt: number | ITimestamp,
   lastPostId: string,
   postIds: string[],
   contributorIds?: string[],
+  author?: IUser,
+  repliesCount?: number,
+  contributorsCount?: number,
 }
 
-interface IThreadComputed extends IThread {
-  author: string,
-  repliesCount: number,
-  contributorsCount: number,
+interface IThreadUpdates {
+  [key: string]: FieldValue
 }
 
-interface IPost {
+interface IThreadToCreate {
+  title: string,
   text: string,
-  publishedAt: number | object,
+  forumId: string,
+}
+
+interface IThreadToUpdate {
+  title: string,
+  text: string,
   id: string,
+}
+
+interface IPostToCreate {
+  text: string,
   threadId: string,
+  firstInThread?: boolean,
+}
+
+export interface IPost {
+  text: string,
+  threadId: string,
+  firstInThread?: boolean,
+  publishedAt: number | ITimestamp | FieldValue,
+  id: string,
   userId: string,
   edited?: {
-    at: number | object,
+    at: number | ITimestamp,
     by: string,
     moderated: boolean,
   },
-  firstInThread?: boolean,
 }
 
 interface IUserCreated {
@@ -71,29 +95,29 @@ interface IUserCreated {
   id: string,
 }
 
-interface IUser extends IUserCreated {
-  avatar: string,
+export interface IUser {
+  id: string,
+  email: string,
+  name: string,
+  username: string,
+  avatar?: string,
   usernameLower: string,
-  bio: string,
-  registeredAt: number | object,
-  lastVisitAt: number | object,
-  postsCount: number,
+  bio?: string,
+  registeredAt: number | ITimestamp,
+  lastVisitAt: number | ITimestamp,
   threadsStarted: string[],
   website?: string,
+  postIds?: IPost[],
+  postsCount?: number,
+  threadIds?: IThread[],
+  threadsCount?: number,
 }
 
 interface IUserModerator extends IUser {
   isModerator: boolean,
 }
 
-interface IUserComputed extends IUser {
-  posts: IPost[],
-  postsCount: number,
-  threads: IThread[],
-  threadsCount: number,
-}
-
-interface IItem {
+interface IItemDescriber {
   resource: string,
   id: string,
   handleUnsubscribe?: Function | null,
@@ -101,7 +125,7 @@ interface IItem {
   callBack?: Function | null,
 }
 
-interface IItems {
+interface IItemsArrayDescriber {
   resource: string,
   ids: string[],
   callBack?: Function | null,
@@ -109,30 +133,34 @@ interface IItems {
 
 
 export default function () {
-  const { $firestore: db } = useNuxtApp();
+  // const { $firestore: db } = useNuxtApp();
+
+  let db: Firestore;
+  const { $firestore } = useNuxtApp();
+  db = $firestore as Firestore;
 
   let categories = useState<ICategory[]>("categories", () => []);
   let forums = useState<IForum[]>("forums", () => []);
   let threads = useState<IThread[]>("threads", () => []);
   let posts = useState<IPost[]>("posts", () => []);
   let users = useState<IUser[]>("users", () => []);
-  let unsubscribes = useState("unsubscribes", () => []);
+  let unsubscribes = useState<Unsubscribe[]>("unsubscribes", () => []);
   let isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded", () => true);
 
   const user = computed(() => {
-    return (id: string): IUserComputed | null => {
-      //const user = findItemById(users.value, id);
-      const user = users.value.find((user) => user.id === id);
+    return (id: string): IUser | null => {
+      const user = findItemById(users.value, id);
+      //const user = users.value.find((user) => user.id === id);
       if (!user) return null;
       return {
         ...user,
-        get posts() {
+        get postIds() {
           return posts.value.filter((post) => post.userId === user.id);
         },
         get postsCount() {
           return user.postsCount || 0;
         },
-        get threads() {
+        get threadIds() {
           return threads.value.filter((post) => post.userId === user.id);
         },
         get threadsCount() {
@@ -143,15 +171,15 @@ export default function () {
   });
 
   const thread = computed(() => {
-    return (id: string): IThreadComputed | object => {
-      //const thread = findItemById(state.threads, id);
-      const thread = threads.value.find((thread) => thread.id === id);
-      if (!thread) return {};
+    return (id: string): IThread => {
+      const thread = findItemById(threads.value, id);
+      //const thread = threads.value.find((thread) => thread.id === id);
+      if (!thread) return {} as IThread;
       return {
         ...thread,
         get author() {
-          //return findItemById(state.users, thread.userId);
-          return users.value.find((user) => user.id === thread.userId);
+          return findItemById(users.value, thread.userId);
+          //return users.value.find((user) => user.id === thread.userId);
         },
         get repliesCount() {
           return thread.postIds.length - 1;
@@ -168,23 +196,24 @@ export default function () {
   // Чтение из БД Cloud Firestore
   //------------------------------------------------------------
   // Создаем два универсальных метода для чтения из базы данных:
-  function fetchItem({
+
+  function fetchItem<T extends { id?: string; }>({
     resource,
     id,
     handleUnsubscribe = null,
     once = false,
     callBack = null,
-  }: IItem): Promise<IItem | null>{
+  }: IItemDescriber): Promise<T | null>{
     return new Promise((resolve) => {
       const docRef = doc(db, resource, id);
       const unsubscribe = onSnapshot(docRef, (doc) => {
         if (once) unsubscribe();
 
         if (doc.exists()) {
-          const item = { ...doc.data(), id: doc.id };
+          const item = { ...doc.data(), id: doc.id } as T;
           let previousItem = findItemById(useState(resource).value, id);
           previousItem = previousItem ? { ...previousItem } : null;
-          pushItemToStore(resource, item);
+          pushItemToStore<T>(resource, item);
           if (typeof callBack === "function") {
             const isLocal = doc.metadata.hasPendingWrites;
             callBack({ item: { ...item }, previousItem, isLocal });
@@ -202,9 +231,9 @@ export default function () {
     });
   }
 
-  function fetchItems({ ids, resource, callBack = null }: IItems): Promise<(IItem | null)[]> {
+  function fetchItems<T extends { id?: string; }>({ ids, resource, callBack = null }: IItemsArrayDescriber): Promise<(T | null)[]> {
     const itemIds: string[] = ids || [];
-    return Promise.all(itemIds.map((id: string) => fetchItem({ id, resource, callBack })));
+    return Promise.all(itemIds.map((id: string) => fetchItem<T>({ id, resource, callBack })));
   }
 
   async function unsubscribeAllSnapshots(): Promise<void> {
@@ -214,23 +243,23 @@ export default function () {
 
   // Создаем на их основе методы чтения из базы данных
   // Для одного item
-  function fetchCategory({ id }: {id: string}): Promise<IItem | null> {
+  function fetchCategory({ id }: {id: string}): Promise<ICategory | null> {
     return fetchItem({ resource: "categories", id });
   }
 
-  function fetchForum({ id, once }: {id: string, once: boolean}): Promise<IItem | null> {
+  function fetchForum({ id, once = false }: {id: string, once?: boolean}): Promise<IForum | null> {
     return fetchItem({ resource: "forums", id, once });
   }
 
-  function fetchThread({ id, once }: {id: string, once: boolean}): Promise<IItem | null> {
+  function fetchThread({ id, once = false }: {id: string, once?: boolean}): Promise<IThread | null> {
     return fetchItem({ resource: "threads", id, once });
   }
 
-  function fetchPost({ id }: {id: string}): Promise<IItem | null> {
+  function fetchPost({ id }: {id: string}): Promise<IPost | null> {
     return fetchItem({ resource: "posts", id });
   }
 
-  function fetchUser({ id }: {id: string}): Promise<IItem | null> {
+  function fetchUser({ id }: {id: string}): Promise<IUser | null> {
     return fetchItem({ resource: "users", id });
   }
 
@@ -239,24 +268,24 @@ export default function () {
     let categories: ICategory[] = [];
     const querySnapshot = await getDocs(collection(db, "categories"));
     querySnapshot.forEach((doc) => {
-      const item = { ...doc.data(), id: doc.id };
+      const item = { ...doc.data(), id: doc.id } as ICategory;
       categories.push(item);
       pushItemToStore("categories", item);
     });
     return Promise.resolve(categories);
   }
 
-  function fetchForums({ ids }: {ids: string[]}): Promise<(IItem | null)[]> {
+  function fetchForums({ ids }: {ids: string[]}): Promise<(IForum | null)[]> {
     return fetchItems({ resource: "forums", ids });
   }
 
-  function fetchThreads({ ids }: {ids: string[]}): Promise<(IItem | null)[]> {
+  function fetchThreads({ ids }: {ids: string[]}): Promise<(IThread | null)[]> {
     return fetchItems({ resource: "threads", ids });
   }
 
   function fetchThreadsByPage(
-    { ids = [], page, threadsPerPage = 10 }: 
-    { ids: [], page: number, threadsPerPage: number }): Promise<(IItem | null)[]> {
+    { ids = [], page, threadsPerPage = 10 }:
+    { ids: string[], page: number, threadsPerPage: number }): Promise<(IThread | null)[]> | [] {
     if (ids.length === 0) return [];
     threads.value = [];
     const chunks = chunk(ids, threadsPerPage);
@@ -264,11 +293,11 @@ export default function () {
     return fetchThreads({ ids: limitedIds });
   }
 
-  function fetchPosts({ ids }: {ids: string[]}): Promise<(IItem | null)[]> {
+  function fetchPosts({ ids }: {ids: string[]}): Promise<(IPost | null)[]> {
     return fetchItems({ resource: "posts", ids });
   }
 
-  function fetchUsers({ ids }: {ids: string[]}): Promise<(IItem | null)[]> {
+  function fetchUsers({ ids }: {ids: string[]}): Promise<(IUser | null)[]> {
     return fetchItems({ resource: "users", ids });
   }
 
@@ -276,7 +305,7 @@ export default function () {
   // Запись в БД Cloud Firestore
   //------------------------------------------------------------
   async function createThread(
-    { text, title, forumId }: IThread & IPost
+    { text, title, forumId }: IThreadToCreate
     ): Promise<IThread> {
     // Подготавливаем данные для отправки
     const authId: Ref<string> = useState('authId');
@@ -320,9 +349,7 @@ export default function () {
     return findItemById(threads, threadRef.id);
   }
 
-  async function updateThread(
-    { title, text, id }: IThread & IPost
-    ): Promise<IThread> {
+  async function updateThread({ title, text, id }: IThreadToUpdate): Promise<IThread> {
     // Подготавливаем данные
     const thread = findItemById(threads.value, id);
     const post = findItemById(posts.value, thread.postIds[0]);
@@ -345,9 +372,10 @@ export default function () {
     return makeResourceFromDoc(newThread);
   }
 
-  async function createPost(post: IPost): Promise<void> {
+  async function createPost(postToCreate: IPostToCreate): Promise<void> {
     // Подготавливаем данные
     const authId: Ref<string> = useState('authId');
+    const post = { ...postToCreate } as IPost;
     post.userId = authId.value;
     post.publishedAt = serverTimestamp();
     post.firstInThread = post.firstInThread || false;
@@ -360,7 +388,7 @@ export default function () {
     // - id поста добавляем в соответствующий thread
     // - id пользователя, написавшего пост, тоже добавлям в этот же thread
     batch.set(postRef, post);
-    const threadUpdates = {
+    const threadUpdates: IThreadUpdates = {
       postIds: arrayUnion(postRef.id),
     };
     if (!post.firstInThread) {
@@ -420,6 +448,20 @@ export default function () {
     return makeResourceFromDoc(newUser);
   }
 
+  // async function updateUser<T extends IUser>(user: T): Promise<void> {
+  //   const userUpdates = {
+  //     avatar: user.avatar || null,
+  //     username: user.username || null,
+  //     name: user.name || null,
+  //     bio: user.bio || null,
+  //     website: user.website || null,
+  //     email: user.email || null,
+  //   };
+  //   const userRef = doc(db, "users", user.id);
+  //   await updateDoc(userRef, userUpdates);
+  //   pushItemToStore("users", user);
+  // }
+
   async function updateUser(user: IUser): Promise<void> {
     const userUpdates = {
       avatar: user.avatar || null,
@@ -464,8 +506,8 @@ export default function () {
     };
   }
 
-  function pushItemToStore(resource: string, item: IItem): void {
-    const resourceArray = useState(resource).value as IItem[];
+  function pushItemToStore<T extends { id?: string }>(resource: string, item: T): void {
+    const resourceArray = useState(resource).value as T[];
     const index = resourceArray.findIndex((r) => r.id === item.id);
     if (item.id && index !== -1) {
       resourceArray[index] = item;
@@ -474,7 +516,19 @@ export default function () {
     }
   }
 
-  function makeResourceFromDoc(doc) {
+  // extends { id?: string }
+
+  // function pushItemToStore(resource: string, item: ItemType): void {
+  //   const resourceArray = useState(resource).value as ItemType[];
+  //   const index = resourceArray.findIndex((r) => r.id === item.id);
+  //   if (item.id && index !== -1) {
+  //     resourceArray[index] = item;
+  //   } else {
+  //     resourceArray.push(item);
+  //   }
+  // }
+
+  function makeResourceFromDoc(doc: DocumentData) {
     if (typeof doc?.data !== "function") return doc;
     return { ...doc.data(), id: doc.id };
   }

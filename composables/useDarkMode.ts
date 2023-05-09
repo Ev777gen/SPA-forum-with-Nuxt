@@ -1,10 +1,10 @@
-const isDarkMode = ref<boolean>(false);
+const isDarkMode: Ref<boolean> = ref(false);
 
 const toggleDarkMode = (): void => {
   isDarkMode.value = !isDarkMode.value;
 };
 
-watch(isDarkMode, (newValue) => {
+watch(isDarkMode, (newValue: boolean): void => {
   if (newValue === true) {
     document.body.classList.add("dark-mode");
   } else {
@@ -29,7 +29,7 @@ if (
 //   return;
 // }
 
-export default function useDarkMode(): object {
+export default function useDarkMode() {
   return { isDarkMode, toggleDarkMode };
 }
 

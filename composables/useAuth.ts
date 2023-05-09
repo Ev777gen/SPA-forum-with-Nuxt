@@ -114,7 +114,7 @@ export default function () {
     }
   }
 
-  async function uploadAvatar({ file, filename }: { file: FileType, filename: string }): Promise<string | null | undefined> {
+  async function uploadAvatar({ file, filename }: { file: Blob, filename?: string }): Promise<string | null | undefined> {
     if (!file) return null;
     filename = filename || file.name;
     try {
