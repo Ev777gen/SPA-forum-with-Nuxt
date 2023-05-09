@@ -14,16 +14,16 @@
 </template>
 
 <script setup lang="ts">
+import { IForum } from 'composables/useDatabase';
 
-const router = useRouter();
 const route = useRoute();
 
 const forumId: string = route.params.forumId?.toString();
 
-const formIsDirty = ref(false);
+const formIsDirty: Ref<boolean> = ref(false);
 
-const forums = useState("forums");
-const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const forums = useState<IForum[]>("forums");
+const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const {
   fetchForum,
   createThread,
@@ -38,9 +38,16 @@ const forum = computed(() => {
 fetchAsyncData();
 
 async function fetchAsyncData() {
-  startLoadingIndicator();
-  await fetchForum({ id: forumId });
-  stopLoadingIndicator();
+  try {
+    startLoadingIndicator();
+    await fetchForum({ id: forumId });
+  } catch(error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
+    stopLoadingIndicator();
+  }
 }
 
 async function save({ title = "", text ="" }) {

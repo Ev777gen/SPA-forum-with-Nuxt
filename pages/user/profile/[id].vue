@@ -17,10 +17,9 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
 const route = useRoute();
 
-const userId = route.params.id;
+const userId = route.params.id.toString();
 
 const { authUser } = useAuth();
 const isAsyncDataLoaded = useState("isAsyncDataLoaded");

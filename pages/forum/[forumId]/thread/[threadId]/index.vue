@@ -24,12 +24,8 @@
         {{ thread.repliesCount }}
         {{ repliesCountWording(thread.repliesCount) }}
         от
-        {{
-          thread.contributorsCount - 1 <= 1 ? 1 : thread.contributorsCount - 1
-        }}
-        {{
-          thread.contributorsCount - 1 <= 1 ? "пользователя" : "пользователей"
-        }}
+        {{ contributorsCount(thread.contributorsCount) }}
+        {{ contributorsCountWording(thread.contributorsCount) }}
       </span>
       <span v-else class="thread__replies">Нет ответов</span>
     </p>
@@ -49,11 +45,13 @@
 </template>
 
 <script setup lang="ts">
+import { IPost } from 'composables/useDatabase';
+
 const route = useRoute();
-const id = route.params.threadId;
+const id: string = route.params.threadId.toString();
 
 const { authUser } = useAuth();
-const posts = useState("posts");
+const posts = useState<IPost[]>("posts");
 const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const { thread: threadGetter } = useDatabase();
 const {
@@ -76,13 +74,22 @@ const threadPosts = computed(() => {
 fetchAsyncData();
 
 async function fetchAsyncData() {
-  startLoadingIndicator();
-  const thread = await fetchThread({ id: id });
-  await fetchPostsWithUsers(thread.postIds);
-  stopLoadingIndicator();
+  try {
+    startLoadingIndicator();
+    const thread = await fetchThread({ id: id });
+    if (thread) {
+      await fetchPostsWithUsers(thread.postIds);
+    }
+  } catch(error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
+    stopLoadingIndicator();
+  }
 }
 
-function addPost(eventData: any) {
+function addPost(eventData: { post: IPost }): void {
   const post = {
     ...eventData.post,
     threadId: id,
@@ -90,12 +97,28 @@ function addPost(eventData: any) {
   createPost(post);
 }
 
-async function fetchPostsWithUsers(ids = []) {
+async function fetchPostsWithUsers(ids: string[] = []): Promise<void> {
   // Загружаем из базы данных посты
   const posts = await fetchPosts({ ids });
   // Загружаем id пользователей, написавших эти посты
-  const userIds = posts.map((post) => post.userId).concat(thread.value.userId);
+  const userIds = posts.map((post) => post ? post.userId : '').concat(thread.value.userId);
   await fetchUsers({ ids: userIds });
+}
+
+function contributorsCount(contributorsCount: number | undefined): number {
+  if (contributorsCount && contributorsCount - 1 > 1) {
+    return contributorsCount - 1;
+  } else {
+    return 1;
+  }
+}
+
+function contributorsCountWording(contributorsCount: number | undefined): string {
+  if (contributorsCount && contributorsCount - 1 <= 1) {
+    return "пользователя";
+  } else {
+    return "пользователей";
+  }
 }
 
 definePageMeta({

@@ -80,8 +80,6 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
-
 const isChangingEmail = ref(false);
 const isChangingPassword = ref(false);
 const newEmail = ref("");
@@ -89,9 +87,8 @@ const password = ref("");
 const newPassword = ref("");
 
 const { authUser: activeUser } = useAuth();
-const { reauthenticate, updateEmail } = useAuth();
-const { updateUser, startLoadingIndicator, stopLoadingIndicator } =
-  useDatabase();
+const { reauthenticate, updateUserEmail } = useAuth();
+const { updateUser, startLoadingIndicator, stopLoadingIndicator } = useDatabase();
 
 const isChanging = computed(() => {
   return (
@@ -109,19 +106,17 @@ watch(activeUser, (newValue) => {
 async function changeEmail() {
   try {
     startLoadingIndicator();
-    await reauthenticate({
-      email: activeUser.value.email,
-      password: password.value,
-    });
-    await updateEmail({ email: newEmail.value });
-    updateUser({ ...activeUser.value, email: newEmail.value });
-    clearForm();
-    isChangingEmail.value = false;
-    stopLoadingIndicator();
+    if (activeUser.value) {
+      await reauthenticate({
+        email: activeUser.value.email,
+        password: password.value,
+      });
+      await updateUserEmail({ email: newEmail.value });
+      updateUser({ ...activeUser.value, email: newEmail.value });
+    }
   } catch (error) {
-    alert(
-      "Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз."
-    );
+    alert("Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.");
+  } finally {
     clearForm();
     isChangingEmail.value = false;
     stopLoadingIndicator();
@@ -136,13 +131,11 @@ async function changePassword() {
   //   startLoadingIndicator();
   //   await reauthenticate({ email: activeUser.value.email, password: password.value });
   //   await updatePassword({ password: newPassword.value });
-  //   clearForm();
-  //   isChangingPassword.value = false;
-  //   stopLoadingIndicator();
   // } catch (error) {
   //   alert('Возникла ошибка при обновлении данных пользователя. Попробуйте повторить еще раз.');
+  // } finally {
   //   clearForm();
-  //   isChangingPassword.value = false;
+  //   isChangingEmail.value = false;
   //   stopLoadingIndicator();
   // }
 

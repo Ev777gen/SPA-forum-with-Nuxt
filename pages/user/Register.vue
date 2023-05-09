@@ -42,8 +42,6 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
-
 const form = reactive({
   name: "",
   username: "",
@@ -58,7 +56,9 @@ async function register() {
     await registerUserWithEmailAndPassword(form);
     navigateTo("/");
   } catch (error) {
-    alert(error.message);
+    if (error instanceof Error) {
+      alert(error.message);
+    }
   }
 }
 

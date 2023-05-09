@@ -47,7 +47,7 @@
       <button
         class="btn btn_green"
         @click.prevent="logInWithDefaultUser"
-        :disabled="authUser"
+        :disabled="!!authUser"
       >
         войти в аккаунт существующего пользователя
       </button>
@@ -57,8 +57,7 @@
 
 <script setup lang="ts">
 const { authUser, signInUserWithEmailAndPassword } = useAuth();
-const { fetchUser, startLoadingIndicator, stopLoadingIndicator } =
-  useDatabase();
+const { fetchUser, startLoadingIndicator, stopLoadingIndicator } = useDatabase();
 
 const nuxtApp = useNuxtApp();
 
@@ -66,13 +65,17 @@ async function logInWithDefaultUser() {
   try {
     startLoadingIndicator();
     const defaultUser = await fetchUser({ id: "8WGcARP4RqQchFNE2wh326iwQ913" });
-    const credentials = await signInUserWithEmailAndPassword({
-      email: defaultUser.email,
-      password: "123456",
-    });
-    stopLoadingIndicator();
+    if (defaultUser) {
+      const credentials = await signInUserWithEmailAndPassword({
+        email: defaultUser.email,
+        password: "123456",
+      });
+    }
   } catch (error) {
-    alert(error.message);
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
     stopLoadingIndicator();
   }
 }

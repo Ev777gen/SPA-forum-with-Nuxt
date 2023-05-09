@@ -15,7 +15,7 @@
     </div>
 
     <div class="forum__thread-list">
-      <ForumThreadList :threads="threadsToDisplay" />
+      <ForumThreadList :threads="threadsToDisplay || []" />
     </div>
     <div v-if="totalPagesCount > 1" class="pagination">
       <v-pagination
@@ -28,7 +28,8 @@
 </template>
 
 <script setup lang="ts">
-const router = useRouter();
+import { IForum, IThread } from 'composables/useDatabase';
+
 const route = useRoute();
 
 const id: string = route.params.forumId?.toString();
@@ -38,9 +39,9 @@ const threadsPerPage = 10;
 
 const { authUser } = useAuth();
 const { thread } = useDatabase();
-const forums = useState("forums");
-const threads = useState("threads");
-const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const forums = useState<IForum[]>("forums");
+const threads = useState<IThread[]>("threads");
+const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const {
   fetchForum,
   fetchThreads,
@@ -54,11 +55,13 @@ const forum = computed(() => {
   return findItemById(forums.value, id) || {};
 });
 
-const threadsToDisplay = computed(() => {
+const threadsToDisplay = computed((): IThread[] | undefined => {
   if (!forum.value) return [];
-  return threads.value
+  if (Array.isArray(threads.value)) {
+    return threads.value
     .filter((currentThread) => currentThread.forumId === forum.value.id)
     .map((currentThread) => thread.value(currentThread.id));
+  }
 });
 
 const threadsCount = computed(() => {
@@ -81,17 +84,24 @@ async function fetchAsyncData() {
   try {
     startLoadingIndicator();
     const forum = await fetchForum({ id });
-    const threads = await fetchThreadsByPage({
-      ids: forum.threadIds,
-      page: page.value,
-      threadsPerPage,
-    });
-    const users = await fetchUsers({
-      ids: threads.map((thread) => thread.userId),
-    });
-    stopLoadingIndicator();
-  } catch (err) {
-    console.log(err);
+    if (forum) {
+      const threads = await fetchThreadsByPage({
+        ids: forum.threadIds,
+        page: page.value,
+        threadsPerPage,
+      });
+
+      if (threads) {
+        const users = await fetchUsers({
+          ids: threads.map((thread) => thread? thread.userId : ''),
+        });
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error);
+    }
+  } finally {
     stopLoadingIndicator();
   }
 }

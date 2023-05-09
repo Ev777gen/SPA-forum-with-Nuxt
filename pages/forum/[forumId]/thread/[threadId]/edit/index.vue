@@ -16,18 +16,17 @@
 </template>
 
 <script setup lang="ts">
+import { IThread, IPost } from 'composables/useDatabase';
 
 const route = useRoute();
 const forumId: string = route.params.forumId?.toString();
 const threadId: string = route.params.threadId?.toString();
 
-const router = useRouter();
-
 const formIsDirty = ref(false);
 
-const threads = useState("threads");
-const posts = useState("posts");
-const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const threads = useState<IThread[]>("threads");
+const posts = useState<IPost[]>("posts");
+const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const {
   fetchThread,
   updateThread,
@@ -52,10 +51,19 @@ const text = computed(() => {
 fetchAsyncData();
 
 async function fetchAsyncData() {
-  startLoadingIndicator();
-  const thread = await fetchThread({ id: threadId });
-  await fetchPost({ id: thread.postIds[0] });
-  stopLoadingIndicator();
+  try {
+    startLoadingIndicator();
+    const thread = await fetchThread({ id: threadId });
+    if (thread) {
+      await fetchPost({ id: thread.postIds[0] });
+    }
+  } catch(error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
+    stopLoadingIndicator();
+  }
 }
 
 async function save({ title = "", text = "" }) {

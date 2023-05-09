@@ -6,7 +6,9 @@
 </template>
 
 <script setup lang="ts">
-const categories = useState<object[]>("categories");
+import { ICategory } from 'composables/useDatabase';
+
+const categories = useState<ICategory[]>("categories");
 const isAsyncDataLoaded = useState("isAsyncDataLoaded");
 
 const {
@@ -19,13 +21,20 @@ const {
 fetchAsyncData();
 
 async function fetchAsyncData() {
-  startLoadingIndicator();
-  const categoriesToDisplay = await fetchAllCategories();
-  const forumIds = categoriesToDisplay
-    .map((category) => category.forumIds)
-    .flat();
-  await fetchForums({ ids: forumIds });
-  stopLoadingIndicator();
+  try {
+    startLoadingIndicator();
+    const categoriesToDisplay = await fetchAllCategories();
+    const forumIds = categoriesToDisplay
+      .map((category) => category.forumIds)
+      .flat();
+    await fetchForums({ ids: forumIds });
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(error.message);
+    }
+  } finally {
+    stopLoadingIndicator();
+  }
 }
 
 definePageMeta({

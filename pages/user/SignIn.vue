@@ -40,10 +40,7 @@ const form = reactive({
   email: "",
   password: "",
 });
-
 const { signInUserWithEmailAndPassword } = useAuth();
-
-const router = useRouter();
 const route = useRoute();
 
 async function signIn() {
@@ -51,7 +48,9 @@ async function signIn() {
     await signInUserWithEmailAndPassword({ ...form });
     successRedirect();
   } catch (error) {
-    alert(error.message);
+    if (error instanceof Error) {
+      alert(error.message);
+    }
   }
 }
 
