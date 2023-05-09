@@ -1,14 +1,10 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-  interface keyable {
-    [key: string]: any  
-  }
-
   if (process.server) return;
 
-  const threads = useState<keyable[]>("threads");
+  const threads = useState("threads");
   const { fetchThread } = useDatabase();
 
-  await fetchThread({ id: to.params.threadId, once: true });
+  await fetchThread({ id: to.params.threadId?.toString(), once: true });
   // Проверяем, есть ли такая тема
   const threadExists = findItemById(threads.value, to.params.threadId?.toString());
 

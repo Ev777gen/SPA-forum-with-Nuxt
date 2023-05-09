@@ -2,13 +2,15 @@ import { Form, Field, ErrorMessage, defineRule, configure } from "vee-validate";
 import { required, email, min, url } from "@vee-validate/rules";
 import { localize } from "@vee-validate/i18n";
 import { collection, getDocs, query, where } from "firebase/firestore";
-
-interface keyable {
-  [key: string]: any  
-}
+// Импортируем типы
+import { Firestore } from '@firebase/firestore';
 
 export default defineNuxtPlugin((nuxtApp) => {
-  const { $firestore: db } = useNuxtApp();
+  //const { $firestore: db } = useNuxtApp();
+  let db: Firestore;
+  const { $firestore } = useNuxtApp();
+  db = $firestore as Firestore;
+
   // Задаем правила валидации.
   // В качестве функций для этих правил берем
   // готовые правила из библиотеки @vee-validate/rules
@@ -19,7 +21,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   // И пишем свое правило для полей username и email
   // на странице регистрации нового пользователя,
   // чтобы убедиться, что они еще не зарегистрированы
-  defineRule("unique", async (value: string, args: any[] | keyable) => {
+  defineRule("unique", async (value: string, args: any[] ) => {
     // На элементе AppFormField можно записать правила двумя способами:
     // - строкой: <AppFormField ... rules="...|unique:users,username" />
     // - объектом: <AppFormField ... rules="{..., unique: {coll: 'users', field: 'username'}}" />
@@ -38,9 +40,9 @@ export default defineNuxtPlugin((nuxtApp) => {
     // А следующее условие позволяет не обращаться к БД,
     // если пользователь не менял username или email.
     if (value === excluding) return true;
-    // В базе даннх, в коллекции coll ищем документы,
+    // В базе данных, в коллекции coll ищем документы,
     // у которых значение в поле field равно value
-    const queryArgs = [collection(db, coll), where(field, "==", value)];
+    const queryArgs = [collection(db, coll), where(field, "==", value)] as const;
     const fieldQuery = query(...queryArgs);
     const querySnapshot = await getDocs(fieldQuery);
     // Если совпадений в БД нет, возвращаем true
