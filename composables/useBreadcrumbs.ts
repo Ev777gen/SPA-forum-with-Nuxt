@@ -1,18 +1,14 @@
-import { RouteParamsRaw, LocationQueryRaw, RouteLocationNormalizedLoaded } from 'vue-router';
+import { RouteParamsRaw, LocationQueryRaw, RouteLocationNormalizedLoaded, RouteMeta } from 'vue-router';
 
 export interface IBreadcrumb {
-  name: string,
+  name: string | undefined,
   params?: RouteParamsRaw,
   query?: LocationQueryRaw,
   nameToDisplay: string | undefined,
 }
 
-export interface IRoute {
-  path: string,
-  name: string,
-  params?: RouteParamsRaw,
-  query?: LocationQueryRaw,
-  meta?: { breadcrumb: string },
+export interface IRoute extends RouteLocationNormalizedLoaded {
+  meta: RouteMeta & { breadcrumb?: string },
 }
 
 //RouteLocationNormalizedLoaded
@@ -57,7 +53,7 @@ export default function useBreadcrumbs() {
   function addBreadcrumb(route: IRoute): void {
     if (route) {
       const currentRoute: IBreadcrumb = {
-        name: route.name,
+        name: route.name?.toString(),
         params: route.params,
         query: route.query,
         nameToDisplay: route.meta?.breadcrumb,

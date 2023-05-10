@@ -82,37 +82,36 @@
 import { IUser } from "~/composables/useDatabase";
 
 interface Props {
-  user: IUser,
+  user: IUser | null,
 }
 
 const props = defineProps<Props>();
-
-// const props = defineProps({
-//   user: {
-//     type: Object,
-//     required: true,
-//   },
-// });
 
 const emit = defineEmits(["cancel", "save"]);
 
 const activeUser = reactive({ ...props.user });
 const avatar: Ref<Blob | null> = ref(null);
-const avatarPreview: Ref<string | ArrayBuffer | null> = ref(null);
+const avatarPreview: Ref<string | null> = ref(null);
 
 const { isDarkMode } = useDarkMode();
 
 const { uploadAvatar } = useAuth();
 const { updateUser } = useDatabase();
 
-function changeAvatar(e: Event) {
-  if (e.target) {
-    avatar.value = e.target.files[0];
+function changeAvatar(e: Event): void {
+  const target= e.target as HTMLInputElement;
+  if (target.files) {
+    avatar.value = target.files[0];
   }
   const reader = new FileReader();
   reader.onload = (event) => {
-    if (event.target?.result) {
-      avatarPreview.value = event.target.result;
+    const avatarImage = event.target?.result;
+    if (avatarImage) {
+      if (typeof avatarImage === 'string') {
+        avatarPreview.value = avatarImage;
+      } else {
+        avatarPreview.value = avatarImage.toString();
+      }
     }
   };
   if (avatar.value) {
@@ -120,7 +119,7 @@ function changeAvatar(e: Event) {
   }
 }
 
-function deleteAvatar() {
+function deleteAvatar(): void {
   activeUser.avatar = "";
 }
 

@@ -18,11 +18,11 @@
         </NuxtLink>
         <p class="desktop-only text_gray">
           {{ getUserById(post.userId)?.postsCount }}
-          {{ userPostsCountWording(getUserById(post.userId).postsCount) }}
+          {{ userPostsCountWording(getUserById(post.userId)?.postsCount || 0) }}
         </p>
         <p class="desktop-only text_gray">
           {{ getUserById(post.userId)?.threadsCount }}
-          {{ userThreadsCountWording(getUserById(post.userId).threadsCount) }}
+          {{ userThreadsCountWording(getUserById(post.userId)?.threadsCount || 0) }}
         </p>
       </div>
 

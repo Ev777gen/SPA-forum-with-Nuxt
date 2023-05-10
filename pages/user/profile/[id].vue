@@ -17,18 +17,19 @@
 </template>
 
 <script setup lang="ts">
-const route = useRoute();
+import { IUser } from "~/composables/useDatabase";
 
+const route = useRoute();
 const userId = route.params.id.toString();
 
 const { authUser } = useAuth();
-const isAsyncDataLoaded = useState("isAsyncDataLoaded");
+const isAsyncDataLoaded = useState<boolean>("isAsyncDataLoaded");
 const { user, fetchUser, startLoadingIndicator, stopLoadingIndicator } =
   useDatabase();
 
 const edit = ref(false);
 
-const otherUser = computed(() => {
+const otherUser = computed((): IUser | null => {
   if (userId) {
     return user.value(userId);
   } else {
@@ -36,8 +37,8 @@ const otherUser = computed(() => {
   }
 });
 
-const userToDisplay = computed(() => {
-  return otherUser.value || authUser.value;
+const userToDisplay = computed((): IUser | null => {
+  return otherUser.value || authUser.value || null;
 });
 
 watch(userToDisplay, (newValue) => {
@@ -48,7 +49,7 @@ watch(userToDisplay, (newValue) => {
 
 fetchAsyncData();
 
-async function fetchAsyncData() {
+async function fetchAsyncData(): Promise<void> {
   if (userId) {
     startLoadingIndicator();
     await fetchUser({ id: userId });

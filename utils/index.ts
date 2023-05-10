@@ -1,7 +1,7 @@
 import { FieldValue } from 'firebase/firestore';
 
 export interface ITimestamp extends FieldValue {
-  seconds: number,
+  seconds?: number,
 }
 
 export const localeDate = (timestamp: number | ITimestamp): string => {
@@ -11,16 +11,19 @@ export const localeDate = (timestamp: number | ITimestamp): string => {
   // toLocaleTimeString() - время
 
   // Обрабатываем формат timestamp из Firebase
-  if (typeof timestamp !== 'number') {
+  if (typeof timestamp !== 'number' && timestamp.seconds) {
     timestamp = timestamp.seconds;
   }
   // Конвертируем в миллисекунды, если значение в секундах
-  const isTimestampInSeconds = timestamp < 10000000000;
-  if (isTimestampInSeconds) {
-    timestamp *= 1000;
+  if (typeof timestamp === 'number') {
+    const isTimestampInSeconds = timestamp < 10000000000;
+    if (isTimestampInSeconds) {
+      timestamp *= 1000;
+    }
+    return (new Date(timestamp)).toLocaleDateString();
+  } else {
+    return '';
   }
-
-  return (new Date(timestamp)).toLocaleDateString();
 }
 
 export const findItemById = (resources: Record<string, any>[] | unknown, id: string) => {

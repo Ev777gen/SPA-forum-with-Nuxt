@@ -55,7 +55,7 @@
 import { IUser } from '~/composables/useDatabase';
 
 interface Props {
-  user: IUser,
+  user: IUser | null,
 }
 
 const props = defineProps<Props>();
